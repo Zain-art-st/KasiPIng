@@ -34,6 +34,10 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return true;
+    $allowed = collect(explode(',', (string) config('services.google.allowed_emails')))
+        ->map(fn ($email) => strtolower(trim($email)))
+        ->filter();
+
+    return $allowed->contains(strtolower($this->email));
     }
 }

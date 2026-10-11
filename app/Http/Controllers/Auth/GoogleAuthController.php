@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 
 class GoogleAuthController extends Controller
@@ -13,30 +14,40 @@ class GoogleAuthController extends Controller
     {
         return Socialite::driver('google')
             ->scopes(['https://www.googleapis.com/auth/calendar.readonly'])
+            ->with(['prompt' => 'select_account'])
             ->redirect();
     }
 
     public function callback()
     {
-        $googleUser = Socialite::driver('google')->user();
+        try {
+            $googleUser = Socialite::driver('google')->user();
+        } catch (\Throwable $e) {
+            abort(403, 'Google sign-in was cancelled or failed. Please try again.');
+        }
 
-        $allowedEmails = array_map('trim', explode(',', config('services.google.allowed_emails', '')));
+        $allowed = collect(explode(',', (string) config('services.google.allowed_emails')))
+            ->map(fn ($email) => strtolower(trim($email)))
+            ->filter()
+            ->all();
 
-        if (! in_array($googleUser->email, $allowedEmails, true)) {
+        if (! in_array(strtolower($googleUser->email), $allowed, true)) {
             abort(403, 'This Google account is not authorized to access this system.');
         }
 
-        $user = User::updateOrCreate(
-            ['google_id' => $googleUser->id],
-            [
-                'name' => $googleUser->name,
-                'email' => $googleUser->email,
-                'password' => bcrypt(str()->random(32)),
-            ],
-        );
+        $user = User::firstOrNew(['email' => $googleUser->email]);
+        $user->name = $googleUser->name;
+        $user->google_id = $googleUser->id;
+
+        if (! $user->exists) {
+            $user->password = Str::random(40);
+        }
+
+        $user->save();
 
         Auth::login($user);
+        request()->session()->regenerate();
 
-        return redirect('/admin');
+        return redirect()->intended('/admin');
     }
 }
