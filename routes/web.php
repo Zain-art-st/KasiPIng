@@ -3,10 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\GoogleAuthController;
 
-Route::get('/', function () {
-    return view('welcome');
+Route::redirect('/', '/admin');
     
-});
 use App\Http\Controllers\RsvpController;
 
 Route::get('/rsvp/{token}', [RsvpController::class, 'show'])

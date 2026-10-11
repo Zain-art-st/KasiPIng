@@ -28,7 +28,7 @@ class RsvpController extends Controller
     return view('rsvp.show', [
         'invitation' => $contact->invitation,
         'contact' => $contact,
-        'settings' => \App\Models\FormSettings::first(),
+        'settings' => \App\Models\FormSettings::firstOrCreate([]),
         'customFields' => $customFields,
         'existingValues' => $existingValues,
     ]);
