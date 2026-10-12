@@ -10,18 +10,19 @@ class InvitationStatsOverview extends StatsOverviewWidget
 {
     protected ?string $pollingInterval = '5s';
     protected function getStats(): array
-    {
-        return [
-            Stat::make('Total Invited', Invitation::count()),
+{
+    $standalone = fn () => Invitation::whereNull('meeting_id');
 
-            Stat::make('Attending', Invitation::where('attendance_status', 'attending')->count())
-                ->color('success'),
-
-            Stat::make('Not Attending', Invitation::where('attendance_status', 'not_attending')->count())
-                ->color('danger'),
-
-            Stat::make('Pending', Invitation::where('attendance_status', 'pending')->count())
-                ->color('warning'),
-        ];
-    }
+    return [
+        Stat::make('Total Invited', $standalone()->count()),
+        Stat::make('Attending', $standalone()->where('attendance_status', 'attending')->count())
+            ->color('success'),
+        Stat::make('Representative', $standalone()->where('attendance_status', 'representative_attending')->count())
+            ->color('info'),
+        Stat::make('Not Attending', $standalone()->where('attendance_status', 'not_attending')->count())
+            ->color('danger'),
+        Stat::make('Pending', $standalone()->where('attendance_status', 'pending')->count())
+            ->color('warning'),
+    ];
+}
 }

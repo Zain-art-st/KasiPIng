@@ -18,11 +18,12 @@ return [
         'key' => env('POSTMARK_API_KEY'),
     ],
 
-    'google' => ['allowed_emails' => env('GOOGLE_ALLOWED_ADMIN_EMAILS', ''),
+    'google' => [
     'client_id' => env('GOOGLE_CLIENT_ID'),
     'client_secret' => env('GOOGLE_CLIENT_SECRET'),
     'redirect' => env('GOOGLE_REDIRECT_URI'),
-    ],
+    'allowed_emails' => env('GOOGLE_ALLOWED_ADMIN_EMAILS', ''),
+],
 
     'resend' => [
         'key' => env('RESEND_API_KEY'),

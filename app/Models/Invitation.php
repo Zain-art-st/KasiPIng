@@ -36,8 +36,13 @@ class Invitation extends Model
         return $this->hasMany(InvitationContact::class);
     }
 
+    public function meeting(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+    return $this->belongsTo(Meeting::class);
+    }
+
     public function customFieldValues(): \Illuminate\Database\Eloquent\Relations\HasMany
-{
+    {
     return $this->hasMany(CustomFieldValue::class);
-}
+    }   
 }

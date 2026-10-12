@@ -13,12 +13,18 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class InvitationResource extends Resource
 {
     protected static ?string $model = Invitation::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    
+    public static function getEloquentQuery(): Builder
+{
+    return parent::getEloquentQuery()->whereNull('meeting_id');
+}
 
     public static function form(Schema $schema): Schema
 {
