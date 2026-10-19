@@ -25,8 +25,7 @@ class ImportInvitations extends Page
     protected string $view = 'filament.pages.import-invitations';
 
     public ?array $data = [];
-    public array $csvHeaders = []; #[Url]
-    public ?int $meeting = null;
+    public array $csvHeaders = []; #[Url] public ?int $meeting = null;
 
     public function mount(): void
     {
@@ -272,11 +271,11 @@ class ImportInvitations extends Page
         ->title($message)
         ->success()
         ->send();
-
-    $this->csvHeaders = [];
-    if ($meetingId) {
+        if ($meetingId) {
     $this->redirect(\App\Filament\Resources\Meetings\MeetingResource::getUrl('edit', ['record' => $meetingId]));
     return;
     }
+
+    $this->csvHeaders = [];
     $this->form->fill();
 }}
