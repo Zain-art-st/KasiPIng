@@ -8,7 +8,12 @@
 </head>
 <body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
     <div class="bg-white rounded-lg shadow p-8 max-w-md w-full">
-        <h1 class="text-lg font-semibold text-gray-500 mb-1">{{ $settings->page_heading }}</h1>
+        <<h1 class="text-lg font-semibold text-gray-500 mb-1">{{ $invitation->meeting?->title ?? $settings->page_heading }}</h1>
+        @if ($invitation->meeting)
+        <p class="text-sm text-gray-600 mb-3">
+        {{ $invitation->meeting->starts_at->format('D, j M Y · g:i A') }}@if ($invitation->meeting->location) · {{ $invitation->meeting->location }}@endif
+        </p>
+        @endif
         <h2 class="text-2xl font-bold text-gray-900 mb-6">{{ $invitation->vip_name }}</h2>
 
         @if ($settings->intro_text)

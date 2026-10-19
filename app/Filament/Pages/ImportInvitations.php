@@ -6,6 +6,8 @@ use App\Models\CustomFieldDefinition;
 use App\Models\CustomFieldValue;
 use App\Models\Invitation;
 use App\Models\InvitationContact;
+use App\Models\Meeting;
+use Livewire\Attributes\Url;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
@@ -23,7 +25,8 @@ class ImportInvitations extends Page
     protected string $view = 'filament.pages.import-invitations';
 
     public ?array $data = [];
-    public array $csvHeaders = [];
+    public array $csvHeaders = []; #[Url]
+    public ?int $meeting = null;
 
     public function mount(): void
     {
@@ -160,6 +163,18 @@ class ImportInvitations extends Page
         $mapping[$header] = 'custom:'.$definition->field_key;
         $slotsAvailable--;
     }
+    $meetingId = null;
+
+    if ($this->meeting) {
+    $meetingModel = Meeting::find($this->meeting);
+
+    if (! $meetingModel) {
+        Notification::make()->title('That meeting no longer exists.')->danger()->send();
+        return;
+    }
+
+    $meetingId = $meetingModel->id;
+    }
 
     $created = 0;
     $skipped = 0;
@@ -209,6 +224,11 @@ class ImportInvitations extends Page
                 'vip_email' => $getMappedValue('vip_email') ?: null,
                 'vip_phone' => $getMappedValue('vip_phone') ?: null,
             ],
+            [
+                'meeting_id' => $meetingId,
+                'vip_name' => $vipName,
+                'organization' => $getMappedValue('organization') ?: null,
+            ],
         );
 
         if ($paEmail) {
@@ -254,5 +274,9 @@ class ImportInvitations extends Page
         ->send();
 
     $this->csvHeaders = [];
+    if ($meetingId) {
+    $this->redirect(\App\Filament\Resources\Meetings\MeetingResource::getUrl('edit', ['record' => $meetingId]));
+    return;
+    }
     $this->form->fill();
 }}

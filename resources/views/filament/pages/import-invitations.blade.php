@@ -2,6 +2,12 @@
     <div class="mb-4 text-sm text-gray-600">
         Upload a CSV with columns: <code>vip_name</code>, <code>organization</code> (optional), <code>pa_name</code>, <code>pa_email</code>.
         Multiple rows with the same VIP name will be grouped as multiple contacts under one invitation.
+        @if ($this->meeting)
+    <div class="mb-4 text-sm">
+        Importing attendees into:
+        <strong>{{ \App\Models\Meeting::find($this->meeting)?->title ?? 'Unknown meeting' }}</strong>
+    </div>
+    @endif
     </div>
 
     <form wire:submit="import">

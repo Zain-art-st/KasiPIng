@@ -7,6 +7,8 @@ use App\Filament\Resources\Invitations\Tables\InvitationsTable;
 use Filament\Actions\CreateAction;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
+use App\Filament\Pages\ImportInvitations;
+use Filament\Actions\Action;
 use Filament\Tables\Table;
 
 class InvitationsRelationManager extends RelationManager
@@ -24,7 +26,11 @@ class InvitationsRelationManager extends RelationManager
     {
         return InvitationsTable::configure($table)
             ->headerActions([
-                CreateAction::make(),
-            ]);
+            Action::make('importCsv')
+            ->label('Import CSV')
+            ->icon('heroicon-o-arrow-up-tray')
+            ->url(fn () => ImportInvitations::getUrl(['meeting' => $this->getOwnerRecord()->getKey()])),
+            CreateAction::make(),
+        ]);
     }
 }
