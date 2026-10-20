@@ -41,7 +41,7 @@ TextInput::make('representative_role')
     ->label('Representative Role/Title'),
                 TextInput::make('vehicle_registration'),
                 TextInput::make('estimated_arrival')->label('Waktu Tiba'),
-                TextInput::make('estimated_depature')->label('Waktu pulang'),
+                TextInput::make('estimated_departure')->label('Waktu pulang'),
                 TextInput::make('submitted_by_name')
                     ->disabled(),
                 TextInput::make('submitted_by_email')
