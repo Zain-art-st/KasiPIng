@@ -10,13 +10,15 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Filament\Actions\BulkAction;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Builder;
 
 class InvitationsTable
 {
-    public static function configure(Table $table): Table
-    {
-        return $table
-            ->columns([
+public static function configure(Table $table, bool $standaloneOnly = false): Table
+{
+    return $table
+        ->modifyQueryUsing(fn (Builder $query) => $standaloneOnly ? $query->whereNull('meeting_id') : $query)
+        ->columns([
                 TextColumn::make('vip_name')
                     ->searchable()
                     ->sortable(),

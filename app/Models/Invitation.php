@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Invitation extends Model
 {
     protected $fillable = [
+    'meeting_id',
     'vip_name',
     'organization',
     'vip_email',

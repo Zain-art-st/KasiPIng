@@ -21,5 +21,5 @@ public function down(): void
     Schema::table('invitations', function (Blueprint $table) {
         $table->dropConstrainedForeignId('meeting_id');
     });
-}
+}   
 };

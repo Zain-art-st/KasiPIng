@@ -13,7 +13,6 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 
 class InvitationResource extends Resource
 {
@@ -21,10 +20,6 @@ class InvitationResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
     
-    public static function getEloquentQuery(): Builder
-{
-    return parent::getEloquentQuery()->whereNull('meeting_id');
-}
 
     public static function form(Schema $schema): Schema
 {
@@ -33,7 +28,7 @@ class InvitationResource extends Resource
 
 public static function table(Table $table): Table
 {
-    return InvitationsTable::configure($table);
+    return InvitationsTable::configure($table, standaloneOnly: true);
 }
 
     public static function getRelations(): array
