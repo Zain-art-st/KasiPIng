@@ -13,12 +13,14 @@ class Meeting extends Model
         'location',
         'starts_at',
         'ends_at',
+        'cancelled_at',
         'google_event_id',
     ];
 
     protected $casts = [
         'starts_at' => 'datetime',
         'ends_at' => 'datetime',
+        'cancelled_at' => 'datetime',
     ];
 
     public function invitations(): HasMany

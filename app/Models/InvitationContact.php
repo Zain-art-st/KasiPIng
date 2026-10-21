@@ -32,4 +32,9 @@ class InvitationContact extends Model
     {
         return $this->belongsTo(Invitation::class);
     }
+    
+    public function rsvpUrl(): string
+    {
+    return route('rsvp.show', $this->token);
+    }
 }

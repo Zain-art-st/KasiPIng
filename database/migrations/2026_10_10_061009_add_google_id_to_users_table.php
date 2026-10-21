@@ -11,15 +11,28 @@ return new class extends Migration
      */
 public function up(): void
 {
-    Schema::table('users', function (Blueprint $table) {
-        $table->string('google_id')->nullable()->unique()->after('email');
+    Schema::create('google_connections', function (Blueprint $table) {
+        $table->id();
+        $table->string('email');
+        $table->text('access_token');
+        $table->text('refresh_token');
+        $table->timestamp('expires_at')->nullable();
+        $table->timestamp('last_synced_at')->nullable();
+        $table->text('last_error')->nullable();
+        $table->timestamps();
+    });
+
+    Schema::table('meetings', function (Blueprint $table) {
+        $table->timestamp('cancelled_at')->nullable()->after('google_event_id');
     });
 }
 
 public function down(): void
 {
-    Schema::table('users', function (Blueprint $table) {
-        $table->dropColumn('google_id');
+    Schema::table('meetings', function (Blueprint $table) {
+        $table->dropColumn('cancelled_at');
     });
+
+    Schema::dropIfExists('google_connections');
 }
 };

@@ -29,19 +29,28 @@ class InvitationEmail extends Mailable
             ? [$this->contact->email]
             : [],
         replyTo: [config('mail.reply_to_address', 'afiflegend2006@gmail.com@gmail.com')],
-        subject: 'Independence Day Attendance Confirmation — '.$invitation->vip_name,
+        subject: $invitation->meeting
+        ? 'Invitation: '.$invitation->meeting->title.' — please respond'
+        : 'Independence Day Attendance Confirmation — '.$invitation->vip_name,
     );
 }
 
     public function content(): Content
-    {
-        return new Content(
-            markdown: 'emails.invitation',
-            with: [
-                'vipName' => $this->contact->invitation->vip_name,
-                'contactName' => $this->contact->name,
-                'rsvpUrl' => route('rsvp.show', $this->contact->token),
-            ],
-        );
-    }
+{
+    $invitation = $this->contact->invitation;
+    $meeting = $invitation->meeting;
+
+    return new Content(
+        markdown: $meeting ? 'emails.meeting-invitation' : 'emails.invitation',
+        with: [
+            'vipName' => $invitation->vip_name,
+            'attendeeName' => $invitation->vip_name,
+            'contactName' => $this->contact->name,
+            'rsvpUrl' => $this->contact->rsvpUrl(),
+            'meetingTitle' => $meeting?->title,
+            'startsAt' => $meeting?->starts_at->format('D, j M Y · g:i A'),
+            'location' => $meeting?->location,
+        ],
+    );
+}
 }

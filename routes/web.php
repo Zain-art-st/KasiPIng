@@ -15,3 +15,4 @@ Route::post('/rsvp/{token}', [RsvpController::class, 'submit'])
     ->name('rsvp.submit');
 Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirect'])->name('auth.google.redirect');
 Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->name('auth.google.callback');
+Route::get('/auth/google/calendar', [GoogleAuthController::class, 'connectCalendar'])->name('auth.google.calendar');
