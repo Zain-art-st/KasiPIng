@@ -18,8 +18,14 @@ class InvitationResource extends Resource
 {
     protected static ?string $model = Invitation::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
-    
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedStar;
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Big Event RSVP';
+
+    protected static ?string $navigationLabel = 'Guest List';
+
+    protected static ?int $navigationSort = 1;
+
 
     public static function form(Schema $schema): Schema
 {

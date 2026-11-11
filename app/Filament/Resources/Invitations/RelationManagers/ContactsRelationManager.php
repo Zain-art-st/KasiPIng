@@ -54,6 +54,7 @@ class ContactsRelationManager extends RelationManager
                     ->icon('heroicon-o-envelope')
                     ->action(function (\App\Models\InvitationContact $record) {
                     \Illuminate\Support\Facades\Mail::send(new \App\Mail\InvitationEmail($record));
+                    $record->invitation->forceFill(['invited_at' => now()])->save();
 
                      \Filament\Notifications\Notification::make()
                     ->title('Invitation sent for '.$record->invitation->vip_name)

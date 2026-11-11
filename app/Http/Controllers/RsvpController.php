@@ -28,7 +28,7 @@ class RsvpController extends Controller
     return view('rsvp.show', [
         'invitation' => $contact->invitation,
         'contact' => $contact,
-        'settings' => \App\Models\FormSettings::firstOrCreate([]),
+        'settings' => \App\Models\FormSettings::current(),
         'customFields' => $customFields,
         'existingValues' => $existingValues,
     ]);
@@ -82,7 +82,7 @@ public function submit(string $token, Request $request): \Illuminate\Http\Redire
 
     return redirect()
         ->route('rsvp.show', $token)
-        ->with('success', \App\Models\FormSettings::first()->thank_you_message ?? 'Thank you — your response has been recorded.');
+        ->with('success', \App\Models\FormSettings::current()->thank_you_message);
 }
 
     private function isExpired(InvitationContact $contact): bool

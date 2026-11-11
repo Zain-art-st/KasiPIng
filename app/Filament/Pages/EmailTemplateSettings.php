@@ -15,6 +15,16 @@ class EmailTemplateSettings extends Page
 {
     protected string $view = 'filament.pages.email-template-settings';
 
+    protected static string|\UnitEnum|null $navigationGroup = 'Settings';
+
+    protected static string|\BackedEnum|null $navigationIcon = \Filament\Support\Icons\Heroicon::OutlinedEnvelope;
+
+    protected static ?string $navigationLabel = 'Invitation Email';
+
+    protected static ?string $title = 'Invitation Email';
+
+    protected static ?int $navigationSort = 3;
+
     public ?array $data = [];
 
     public function mount(): void

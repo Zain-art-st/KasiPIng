@@ -18,7 +18,11 @@ class MeetingResource extends Resource
 {
     protected static ?string $model = Meeting::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCalendarDays;
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Meetings';
+
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $recordTitleAttribute = 'Meeting';
 

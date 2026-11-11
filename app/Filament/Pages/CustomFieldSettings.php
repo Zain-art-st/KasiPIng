@@ -10,13 +10,47 @@ use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Schema;
+use App\Filament\Pages\Concerns\HasRsvpPreview;
+use BackedEnum;
+use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use UnitEnum;
 
 class CustomFieldSettings extends Page
 {
+    use HasRsvpPreview;
+
     protected string $view = 'filament.pages.custom-field-settings';
 
+    protected static string|UnitEnum|null $navigationGroup = 'Settings';
+
+    protected static ?int $navigationSort = 2;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedQuestionMarkCircle;
+
+    protected static ?string $navigationLabel = 'Extra RSVP Questions';
+
+    protected static ?string $title = 'Extra RSVP Questions';
+
     public ?array $data = [];
+
+    public function getSubheading(): ?string
+    {
+        return 'Questions you add here are asked on every guest\'s RSVP form, below the standard ones.';
+    }
+
+    /** The questions as they are on screen (unsaved), for the live preview. */
+    protected function previewCustomFields(): Collection
+    {
+        return collect($this->data['fields'] ?? [])
+            ->filter(fn ($f) => ($f['enabled'] ?? true) && trim((string) ($f['label'] ?? '')) !== '')
+            ->values()
+            ->map(fn ($f, $i) => new CustomFieldDefinition([
+                'field_key' => $f['field_key'] ?? 'preview_'.$i,
+                'label' => $f['label'],
+            ]));
+    }
 
     public function mount(): void
     {
@@ -36,20 +70,26 @@ class CustomFieldSettings extends Page
         return $schema
             ->components([
                 Repeater::make('fields')
-                    ->label('Custom Questions')
+                    ->label('Questions (up to 5)')
                     ->schema([
                         TextInput::make('label')
-                            ->label('Question Label')
+                            ->label('Question')
+                            ->placeholder('e.g. Dietary requirements')
                             ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->live(debounce: 500),
                         Toggle::make('enabled')
-                            ->label('Show on forms')
-                            ->default(true),
+                            ->label('Ask guests this question')
+                            ->helperText('Turn off to stop asking without deleting answers already given.')
+                            ->default(true)
+                            ->live(),
                     ])
+                    ->itemLabel(fn (array $state) => $state['label'] ?? 'New question')
                     ->maxItems(5)
-                    ->addActionLabel('Add Question')
+                    ->addActionLabel('Add question')
                     ->reorderable()
-                    ->collapsible(),
+                    ->collapsible()
+                    ->live(),
             ])
             ->statePath('data');
     }

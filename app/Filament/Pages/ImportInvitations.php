@@ -25,6 +25,14 @@ class ImportInvitations extends Page
 {
     protected string $view = 'filament.pages.import-invitations';
 
+    protected static string|\UnitEnum|null $navigationGroup = 'Big Event RSVP';
+
+    protected static string|\BackedEnum|null $navigationIcon = \Filament\Support\Icons\Heroicon::OutlinedArrowUpTray;
+
+    protected static ?string $navigationLabel = 'Import Guests (CSV)';
+
+    protected static ?int $navigationSort = 2;
+
     public ?array $data = [];
 
     public array $csvHeaders = [];

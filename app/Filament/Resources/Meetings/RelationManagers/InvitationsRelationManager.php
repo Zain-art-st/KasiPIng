@@ -26,6 +26,7 @@ class InvitationsRelationManager extends RelationManager
     {
         return InvitationsTable::configure($table)
             ->headerActions([
+            InvitationsTable::sendNotInvitedAction(fn () => $this->getOwnerRecord()->invitations()),
             Action::make('importCsv')
             ->label('Import CSV')
             ->icon('heroicon-o-arrow-up-tray')

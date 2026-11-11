@@ -24,11 +24,13 @@ class Invitation extends Model
     'submitted_at',
     'is_locked',
     'expires_at',
+    'invited_at',
 ];
 
     protected $casts = [
     'submitted_at' => 'datetime',
     'expires_at' => 'datetime',
+    'invited_at' => 'datetime',
     'is_locked' => 'boolean',
 ];
 
@@ -65,6 +67,45 @@ class Invitation extends Model
         $this->unsetRelation('contacts');
 
         return $contact;
+    }
+
+    /**
+     * Email the invitation (one email per mailable contact) and record when.
+     * Returns how many emails were sent; 0 means there is no address to send to.
+     */
+    public function sendInvitation(): int
+    {
+        $this->ensureVipContact();
+        $contacts = $this->mailableContacts();
+
+        foreach ($contacts as $contact) {
+            \Illuminate\Support\Facades\Mail::send(new \App\Mail\InvitationEmail($contact));
+        }
+
+        if ($contacts->isNotEmpty()) {
+            $this->forceFill(['invited_at' => now()])->save();
+        }
+
+        return $contacts->count();
+    }
+
+    /** "To: vip@… · CC: pa@…" lines describing who sendInvitation() will email. */
+    public function recipientSummary(): string
+    {
+        $contacts = $this->vip_email || $this->contacts()->exists()
+            ? $this->mailableContacts()
+            : collect();
+
+        if ($contacts->isEmpty()) {
+            return $this->vip_email ? 'To: '.$this->vip_email : 'No email address on this invitation.';
+        }
+
+        return $contacts->map(function (InvitationContact $c) {
+            $to = $this->vip_email ?: $c->email;
+            $cc = $this->vip_email && strcasecmp($this->vip_email, $c->email) !== 0 ? ' · CC: '.$c->email : '';
+
+            return 'To: '.$to.$cc;
+        })->implode("\n");
     }
 
     /**
