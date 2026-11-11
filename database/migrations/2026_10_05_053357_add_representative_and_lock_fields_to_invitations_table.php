@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -17,7 +18,16 @@ return new class extends Migration
         $table->boolean('is_locked')->default(false)->after('submitted_at');
     });
 
-    // Widen the enum to include the new status
+    // Widen the enum to include the new status. The SQL is MySQL-only; on other
+    // drivers (the SQLite test database) the column just becomes a plain string.
+    if (DB::getDriverName() !== 'mysql') {
+        Schema::table('invitations', function (Blueprint $table) {
+            $table->string('attendance_status')->default('pending')->change();
+        });
+
+        return;
+    }
+
     DB::statement("ALTER TABLE invitations MODIFY attendance_status ENUM('pending', 'attending', 'representative_attending', 'not_attending') DEFAULT 'pending'");
 }
 
@@ -26,6 +36,10 @@ public function down(): void
     Schema::table('invitations', function (Blueprint $table) {
         $table->dropColumn(['representative_name', 'representative_role', 'is_locked']);
     });
+
+    if (DB::getDriverName() !== 'mysql') {
+        return;
+    }
 
     DB::statement("ALTER TABLE invitations MODIFY attendance_status ENUM('pending', 'attending', 'not_attending') DEFAULT 'pending'");
 }

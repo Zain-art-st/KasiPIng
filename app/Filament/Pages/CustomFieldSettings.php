@@ -55,8 +55,7 @@ class CustomFieldSettings extends Page
     }
 
     public function save(): void
-    {   
-        logger('Save method called');
+    {
         $state = $this->form->getState();
         $submittedFields = $state['fields'] ?? [];
 

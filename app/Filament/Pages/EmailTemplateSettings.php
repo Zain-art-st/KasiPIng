@@ -4,7 +4,6 @@ namespace App\Filament\Pages;
 
 use App\Models\EmailTemplate;
 use Filament\Actions\Action;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Placeholder;
@@ -24,9 +23,26 @@ class EmailTemplateSettings extends Page
 
         $this->form->fill([
             'subject' => $template?->subject,
-            'banner_path' => $template?->banner_path,
             'body' => $template?->body,
         ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('reset')
+                ->label('Reset to built-in email')
+                ->color('gray')
+                ->requiresConfirmation()
+                ->modalDescription('Deletes the saved template. Invitations go back to the built-in wording.')
+                ->visible(fn () => EmailTemplate::exists())
+                ->action(function () {
+                    EmailTemplate::query()->delete();
+                    $this->form->fill();
+
+                    Notification::make()->title('Template removed; built-in email restored')->success()->send();
+                }),
+        ];
     }
 
     public function form(Schema $schema): Schema
@@ -35,19 +51,11 @@ class EmailTemplateSettings extends Page
             ->components([
                 Placeholder::make('help')
                     ->label('')
-                    ->content('You can use these placeholders anywhere in the subject or body they will be automatically replaced for each recipient: {vip_name}, {contact_name}, {rsvp_link}'),
+                    ->content('Once saved, this template replaces the built-in invitation email for every invitation (standalone and meeting). Use "Reset to built-in email" to go back. Placeholders, replaced for each recipient: {vip_name}, {contact_name}, {organization}, {meeting_title}, {meeting_time}, {location}, {rsvp_link}. If the body has no {rsvp_link}, a "Respond now" button is added automatically.'),
 
                 TextInput::make('subject')
                     ->required()
                     ->maxLength(255),
-
-                FileUpload::make('banner_path')
-                    ->label('Email Banner Image')
-                    ->image()
-                    ->disk('public')
-                    ->directory('email-banners')
-                    ->imageEditor()
-                    ->helperText('Recommended width: 600px.'),
 
                 RichEditor::make('body')
                     ->required()

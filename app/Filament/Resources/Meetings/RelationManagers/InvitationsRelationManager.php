@@ -30,7 +30,8 @@ class InvitationsRelationManager extends RelationManager
             ->label('Import CSV')
             ->icon('heroicon-o-arrow-up-tray')
             ->url(fn () => ImportInvitations::getUrl(['meeting' => $this->getOwnerRecord()->getKey()])),
-            CreateAction::make(),
+            CreateAction::make()
+                ->after(fn (\App\Models\Invitation $record) => $record->ensureVipContact()),
         ]);
     }
 }

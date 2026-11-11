@@ -10,6 +10,11 @@ class EditInvitation extends EditRecord
 {
     protected static string $resource = InvitationResource::class;
 
+    protected function afterSave(): void
+    {
+        $this->record->ensureVipContact();
+    }
+
     protected function getHeaderActions(): array
     {
         return [

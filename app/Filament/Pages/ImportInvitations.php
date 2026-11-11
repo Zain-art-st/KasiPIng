@@ -218,10 +218,7 @@ class ImportInvitations extends Page
             $paName = $getMappedValue('pa_name');
 
             if (! $vipName) {
-                Log::warning('Skipped row: Missing VIP Name after mapping.', [
-                    'record_data' => $record,
-                    'mapping_state' => $mapping,
-                ]);
+                Log::warning('Skipped row: Missing VIP Name after mapping.');
                 $skipped++;
                 continue;
             }
@@ -253,6 +250,8 @@ class ImportInvitations extends Page
                     ]
                 );
             }
+
+            $invitation->ensureVipContact();
 
             foreach ($mapping as $header => $target) {
                 if (str_starts_with((string) $target, 'custom:')) {

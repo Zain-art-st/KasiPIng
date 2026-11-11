@@ -8,4 +8,9 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateInvitation extends CreateRecord
 {
     protected static string $resource = InvitationResource::class;
+
+    protected function afterCreate(): void
+    {
+        $this->record->ensureVipContact();
+    }
 }

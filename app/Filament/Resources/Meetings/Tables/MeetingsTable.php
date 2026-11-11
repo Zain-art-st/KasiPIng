@@ -23,6 +23,10 @@ class MeetingsTable
                     TextColumn::make('title')
                         ->weight(FontWeight::Bold)
                         ->searchable(),
+                    TextColumn::make('cancelled_at')
+                        ->badge()
+                        ->color('danger')
+                        ->formatStateUsing(fn () => 'Cancelled'),
                     TextColumn::make('starts_at')
                         ->dateTime('D, j M Y · g:i A')
                         ->sortable()
@@ -44,6 +48,9 @@ class MeetingsTable
                 Filter::make('upcoming')
                     ->label('Upcoming only')
                     ->query(fn (Builder $query) => $query->where('starts_at', '>=', now()->startOfDay())),
+                Filter::make('hide_cancelled')
+                    ->label('Hide cancelled')
+                    ->query(fn (Builder $query) => $query->whereNull('cancelled_at')),
             ]);
     }
 }

@@ -39,6 +39,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
+                \App\Filament\Widgets\SystemHealthWarning::class,
                 \App\Filament\Widgets\InvitationStatsOverview::class,
                 AccountWidget::class,
                 FilamentInfoWidget::class,

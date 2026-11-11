@@ -74,22 +74,40 @@ TextColumn::make('representative_name')
             ->action(function (Collection $records) {
                 $sent = 0;
                 $failed = 0;
+                $noAddress = [];
 
                 foreach ($records as $invitation) {
-                    foreach ($invitation->contacts as $contact) {
+                    $invitation->ensureVipContact();
+                    $contacts = $invitation->mailableContacts();
+
+                    if ($contacts->isEmpty()) {
+                        $noAddress[] = $invitation->vip_name;
+                        continue;
+                    }
+
+                    foreach ($contacts as $contact) {
                         try {
                             \Illuminate\Support\Facades\Mail::send(new \App\Mail\InvitationEmail($contact));
                             $sent++;
                         } catch (\Throwable $e) {
+                            report($e);
                             $failed++;
                         }
                     }
                 }
 
-                \Filament\Notifications\Notification::make()
-                    ->title("Bulk send complete: {$sent} sent, {$failed} failed")
-                    ->success()
-                    ->send();
+                $notification = \Filament\Notifications\Notification::make()
+                    ->title("Bulk send complete: {$sent} sent, {$failed} failed");
+
+                if ($noAddress) {
+                    $notification->warning()->body('No email address (no VIP email and no contact): '.implode(', ', $noAddress));
+                } elseif ($failed) {
+                    $notification->danger();
+                } else {
+                    $notification->success();
+                }
+
+                $notification->send();
             }),
         DeleteBulkAction::make(),
     ]),

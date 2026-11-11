@@ -65,7 +65,9 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    // Meeting times, reminders and calendar sync all depend on this. Set
+    // APP_TIMEZONE (e.g. Asia/Kuala_Lumpur) locally and on Cloud.
+    'timezone' => env('APP_TIMEZONE', 'UTC'),
 
     /*
     |--------------------------------------------------------------------------
