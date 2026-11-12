@@ -25,14 +25,44 @@ class Invitation extends Model
     'is_locked',
     'expires_at',
     'invited_at',
+    'no_response_at',
 ];
 
     protected $casts = [
     'submitted_at' => 'datetime',
     'expires_at' => 'datetime',
     'invited_at' => 'datetime',
+    'no_response_at' => 'datetime',
     'is_locked' => 'boolean',
 ];
+
+    protected static function booted(): void
+    {
+        static::saving(function (Invitation $invitation) {
+            if ($invitation->isDirty('attendance_status') && ! $invitation->isDirty('no_response_at')) {
+                $invitation->no_response_at = null;
+            }
+        });
+    }
+
+    public function responseDeadline(): ?\Carbon\CarbonInterface
+    {
+        return $this->meeting_id ? $this->meeting?->starts_at : $this->expires_at;
+    }
+
+    public function statusLabel(): string
+    {
+        if ($this->attendance_status === 'not_attending' && $this->no_response_at) {
+            return 'No response';
+        }
+
+        return match ($this->attendance_status) {
+            'attending' => 'Attending',
+            'representative_attending' => 'Representative',
+            'not_attending' => 'Not attending',
+            default => 'Pending',
+        };
+    }
 
     public function contacts(): HasMany
     {
@@ -49,10 +79,6 @@ class Invitation extends Model
     return $this->hasMany(CustomFieldValue::class);
     }
 
-    /**
-     * A VIP with no PA would otherwise have no token and no RSVP link, and be
-     * skipped by bulk send and reminders. Give them a contact of their own.
-     */
     public function ensureVipContact(): ?InvitationContact
     {
         if (! $this->vip_email || $this->contacts()->exists()) {
@@ -69,10 +95,6 @@ class Invitation extends Model
         return $contact;
     }
 
-    /**
-     * Email the invitation (one email per mailable contact) and record when.
-     * Returns how many emails were sent; 0 means there is no address to send to.
-     */
     public function sendInvitation(): int
     {
         $this->ensureVipContact();
@@ -89,7 +111,6 @@ class Invitation extends Model
         return $contacts->count();
     }
 
-    /** "To: vip@… · CC: pa@…" lines describing who sendInvitation() will email. */
     public function recipientSummary(): string
     {
         $contacts = $this->vip_email || $this->contacts()->exists()
@@ -108,11 +129,6 @@ class Invitation extends Model
         })->implode("\n");
     }
 
-    /**
-     * Contacts an invitation email goes out through. Each email is addressed to
-     * the VIP with the contact copied, so when PAs exist the VIP's own contact is
-     * left out (otherwise the VIP would receive the invitation twice).
-     */
     public function mailableContacts(): \Illuminate\Support\Collection
     {
         $contacts = $this->contacts->sortBy('id')->values();

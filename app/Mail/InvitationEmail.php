@@ -15,7 +15,6 @@ class InvitationEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    /** Drop a PDF here (it is committed with the code) and every invitation carries it. */
     public const ATTACHMENT_PATH = 'attachments/invitation.pdf';
 
     public function __construct(
@@ -79,7 +78,6 @@ class InvitationEmail extends Mailable
             : [];
     }
 
-    /** A saved template (subject and body both filled in) replaces the built-in wording. */
     private function template(): ?EmailTemplate
     {
         return EmailTemplate::query()
@@ -97,7 +95,6 @@ class InvitationEmail extends Mailable
             : 'Independence Day Attendance Confirmation — '.$invitation->vip_name;
     }
 
-    /** Replace {placeholders}; values are HTML-escaped when filling the body. */
     private function fill(string $text, bool $escape): string
     {
         $invitation = $this->contact->invitation;
@@ -119,7 +116,6 @@ class InvitationEmail extends Mailable
             $value = (string) $value;
 
             if ($escape && $key === 'rsvp_link') {
-                // A bare placeholder becomes a clickable link; one already inside an href stays a URL.
                 $replace['href="{rsvp_link}"'] = 'href="'.e($url).'"';
                 $replace['href="%7Brsvp_link%7D"'] = 'href="'.e($url).'"';
                 $value = '<a href="'.e($url).'">'.e($url).'</a>';

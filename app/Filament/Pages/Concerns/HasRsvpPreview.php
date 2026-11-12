@@ -9,13 +9,8 @@ use App\Models\InvitationContact;
 use App\Models\Meeting;
 use Illuminate\Support\Collection;
 
-/**
- * Renders the real guest RSVP page with sample data and the settings as they
- * are on screen right now (unsaved), for the preview panel beside the form.
- */
 trait HasRsvpPreview
 {
-    /** 'event' (Big Event RSVP) or 'meeting' */
     public string $previewAs = 'event';
 
     public bool $previewSubmitted = false;
@@ -30,13 +25,11 @@ trait HasRsvpPreview
         $this->previewSubmitted = $submitted;
     }
 
-    /** Settings shown in the preview; pages override to use their unsaved form state. */
     protected function previewSettings(): FormSettings
     {
         return FormSettings::current();
     }
 
-    /** Extra questions shown in the preview; pages override to use their unsaved form state. */
     protected function previewCustomFields(): Collection
     {
         return CustomFieldDefinition::where('enabled', true)->orderBy('sort_order')->get();

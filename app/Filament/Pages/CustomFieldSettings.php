@@ -40,7 +40,6 @@ class CustomFieldSettings extends Page
         return 'Questions you add here are asked on every guest\'s RSVP form, below the standard ones.';
     }
 
-    /** The questions as they are on screen (unsaved), for the live preview. */
     protected function previewCustomFields(): Collection
     {
         return collect($this->data['fields'] ?? [])

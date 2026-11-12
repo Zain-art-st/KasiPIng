@@ -26,7 +26,6 @@ class InvitationResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
-
     public static function form(Schema $schema): Schema
 {
     return InvitationForm::configure($schema);

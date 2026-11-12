@@ -7,7 +7,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ReminderLog extends Model
 {
-    protected $fillable = ['invitation_id', 'interval_minutes', 'status', 'detail'];
+    protected $fillable = ['invitation_id', 'due_at', 'interval_minutes', 'status', 'detail'];
+
+    protected $casts = [
+        'due_at' => 'datetime',
+    ];
 
     public function invitation(): BelongsTo
     {

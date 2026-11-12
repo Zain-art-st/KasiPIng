@@ -18,8 +18,6 @@ return new class extends Migration
         $table->boolean('is_locked')->default(false)->after('submitted_at');
     });
 
-    // Widen the enum to include the new status. The SQL is MySQL-only; on other
-    // drivers (the SQLite test database) the column just becomes a plain string.
     if (DB::getDriverName() !== 'mysql') {
         Schema::table('invitations', function (Blueprint $table) {
             $table->string('attendance_status')->default('pending')->change();

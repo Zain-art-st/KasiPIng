@@ -65,8 +65,7 @@ return [
     |
     */
 
-    // Meeting times, reminders and calendar sync all depend on this. Set
-    // APP_TIMEZONE (e.g. Asia/Kuala_Lumpur) locally and on Cloud.
+    // Reminder and meeting times depend on APP_TIMEZONE (e.g. Asia/Kuala_Lumpur).
     'timezone' => env('APP_TIMEZONE', 'UTC'),
 
     /*

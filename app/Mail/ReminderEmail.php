@@ -2,51 +2,52 @@
 
 namespace App\Mail;
 
+use App\Models\FormSettings;
 use App\Models\Invitation;
 use App\Models\InvitationContact;
-use App\Models\Meeting;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-/**
- * One reminder to one recipient. The RSVP link is always $contact's own link,
- * so "submitted by" names the person whose link was used.
- */
 class ReminderEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
     public function __construct(
         public Invitation $invitation,
-        public Meeting $meeting,
-        public int $intervalMinutes,
         public InvitationContact $contact,
-        public string $recipient,
+        public int $minutesLeft,
     ) {}
 
     public function envelope(): Envelope
     {
+        $vipEmail = $this->invitation->vip_email;
+        $copyContact = $vipEmail && strcasecmp($vipEmail, $this->contact->email) !== 0;
         $prefix = $this->urgent() ? 'URGENT: ' : 'Reminder: ';
 
         return new Envelope(
-            to: [$this->recipient],
+            to: [$vipEmail ?: $this->contact->email],
+            cc: $copyContact ? [$this->contact->email] : [],
             replyTo: array_filter([config('mail.reply_to_address')]),
-            subject: $prefix.$this->meeting->title.' starts in '.$this->leadLabel().' — please respond',
+            subject: $prefix.$this->title().' — please respond',
         );
     }
 
     public function content(): Content
     {
+        $meeting = $this->invitation->meeting;
+        $deadline = $this->invitation->responseDeadline();
+
         return new Content(
             markdown: 'emails.reminder',
             with: [
                 'attendeeName' => $this->invitation->vip_name,
-                'meetingTitle' => $this->meeting->title,
-                'startsAt' => $this->meeting->starts_at->format('D, j M Y · g:i A'),
-                'location' => $this->meeting->location,
+                'title' => $this->title(),
+                'isMeeting' => (bool) $meeting,
+                'when' => $deadline?->format('D, j M Y · g:i A'),
+                'location' => $meeting?->location,
                 'leadLabel' => $this->leadLabel(),
                 'urgent' => $this->urgent(),
                 'rsvpUrl' => $this->contact->rsvpUrl(),
@@ -54,14 +55,25 @@ class ReminderEmail extends Mailable
         );
     }
 
-    private function urgent(): bool
+    private function title(): string
     {
-        return $this->intervalMinutes <= 60;
+        return $this->invitation->meeting?->title ?? FormSettings::current()->page_heading;
     }
 
-    private function leadLabel(): string
+    private function urgent(): bool
     {
-        $minutes = $this->intervalMinutes;
+        return $this->minutesLeft <= 60;
+    }
+
+    public function leadLabel(): string
+    {
+        $minutes = $this->minutesLeft;
+
+        if ($minutes >= 1440) {
+            $days = intdiv($minutes, 1440);
+
+            return $days.' '.($days === 1 ? 'day' : 'days');
+        }
 
         if ($minutes >= 60) {
             $hours = intdiv($minutes, 60);
@@ -69,6 +81,6 @@ class ReminderEmail extends Mailable
             return $hours.' '.($hours === 1 ? 'hour' : 'hours');
         }
 
-        return $minutes.' minutes';
+        return $minutes.' '.($minutes === 1 ? 'minute' : 'minutes');
     }
 }

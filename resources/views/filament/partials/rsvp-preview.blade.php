@@ -1,4 +1,3 @@
-{{-- Live preview of the guest RSVP page. Expects a Livewire page using HasRsvpPreview. --}}
 <div class="rsvp-preview">
     <div style="display:flex; flex-wrap:wrap; gap:.5rem; align-items:center; margin-bottom:.75rem;">
         <span style="font-weight:600; font-size:.875rem; margin-right:auto;">Live preview: what guests see</span>

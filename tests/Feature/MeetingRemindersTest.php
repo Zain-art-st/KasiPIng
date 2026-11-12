@@ -3,11 +3,13 @@
 namespace Tests\Feature;
 
 use App\Mail\ReminderEmail;
+use App\Models\AppSetting;
 use App\Models\Invitation;
 use App\Models\InvitationContact;
 use App\Models\Meeting;
 use App\Models\ReminderLog;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
@@ -19,15 +21,12 @@ class MeetingRemindersTest extends TestCase
     {
         parent::setUp();
         Mail::fake();
-        $this->travelTo(now()->startOfMinute());
+        $this->travelTo(Carbon::parse('2026-11-20 14:00:00'));
     }
 
-    private function meetingIn(int $minutes, array $attrs = []): Meeting
+    private function meetingAt(string $time, array $attrs = []): Meeting
     {
-        return Meeting::create($attrs + [
-            'title' => 'Board Meeting',
-            'starts_at' => now()->addMinutes($minutes),
-        ]);
+        return Meeting::create($attrs + ['title' => 'Board Meeting', 'starts_at' => Carbon::parse('2026-11-20 '.$time)]);
     }
 
     private function invite(Meeting $meeting, array $attrs = [], array $contacts = [['PA One', 'pa1@example.com']]): Invitation
@@ -37,6 +36,7 @@ class MeetingRemindersTest extends TestCase
             'vip_name' => 'Dato Example',
             'vip_email' => 'vip@example.com',
             'attendance_status' => 'pending',
+            'invited_at' => now(),
         ]);
 
         foreach ($contacts as [$name, $email]) {
@@ -46,113 +46,156 @@ class MeetingRemindersTest extends TestCase
         return $invitation->fresh();
     }
 
-    public function test_pending_invitation_gets_reminder_in_its_window(): void
+    private function runAt(array $times): int
     {
-        $meeting = $this->meetingIn(1435);
-        $pending = $this->invite($meeting);
-        $this->invite($meeting, ['vip_name' => 'Responded', 'attendance_status' => 'attending']);
+        foreach ($times as $time) {
+            $this->travelTo(Carbon::parse('2026-11-20 '.$time));
+            $this->artisan('reminders:dispatch')->assertSuccessful();
+        }
 
-        $this->artisan('reminders:dispatch')->expectsOutput('Dispatched 1 reminder(s).')->assertSuccessful();
-
-        $this->assertSame('sent', ReminderLog::where('invitation_id', $pending->id)->value('status'));
-        $this->assertSame(1440, ReminderLog::first()->interval_minutes);
-        Mail::assertSent(ReminderEmail::class, fn (ReminderEmail $m) => $m->hasTo('vip@example.com'));
-        Mail::assertSentCount(1);
+        return Mail::sent(ReminderEmail::class)->count();
     }
 
-    public function test_running_twice_does_not_send_twice(): void
+    private function everyMinuteUntil(string $end): array
     {
-        $this->invite($this->meetingIn(1435));
+        $times = [];
+        for ($t = Carbon::parse('2026-11-20 14:00'); $t->lt(Carbon::parse('2026-11-20 '.$end)); $t->addMinutes(5)) {
+            $times[] = $t->format('H:i:s');
+        }
 
-        $this->artisan('reminders:dispatch');
-        $this->artisan('reminders:dispatch')->expectsOutput('Dispatched 0 reminder(s).');
-
-        Mail::assertSentCount(1);
-        $this->assertSame(1, ReminderLog::count());
+        return $times;
     }
 
-    public function test_nothing_outside_a_window_or_for_cancelled_meetings(): void
+    public function test_reminders_are_off_by_default(): void
     {
-        $this->invite($this->meetingIn(100));   // between the 120 and 60 windows
-        $this->invite($this->meetingIn(1435, ['cancelled_at' => now()]));
-        $this->invite($this->meetingIn(-5));     // already started
+        $this->invite($this->meetingAt('18:00'));
 
-        $this->artisan('reminders:dispatch')->expectsOutput('Dispatched 0 reminder(s).');
-
-        Mail::assertNothingSent();
+        $this->assertSame(0, $this->runAt($this->everyMinuteUntil('18:00')));
+        $this->assertSame(0, ReminderLog::count());
     }
 
-    public function test_before_escalation_only_the_vip_is_emailed(): void
+    public function test_every_two_hours_from_2pm_for_a_6pm_meeting_sends_once_at_4pm(): void
     {
-        $this->invite($this->meetingIn(355)); // 360 window, above the 180 escalation point
+        AppSetting::put(AppSetting::REMINDER_INTERVAL_HOURS, 2);
+        $this->invite($this->meetingAt('18:00'));
 
-        $this->artisan('reminders:dispatch');
-
-        Mail::assertSent(ReminderEmail::class, fn (ReminderEmail $m) => $m->hasTo('vip@example.com') && ! $m->hasCc('pa1@example.com'));
-        Mail::assertSentCount(1);
+        $this->assertSame(1, $this->runAt($this->everyMinuteUntil('18:00')));
+        $this->assertEquals(Carbon::parse('2026-11-20 16:00'), ReminderLog::sole()->due_at);
+        $this->assertSame('sent', ReminderLog::sole()->status);
     }
 
-    public function test_from_escalation_each_pa_gets_their_own_link(): void
+    public function test_every_hour_sends_at_3_4_and_5pm(): void
     {
-        $invitation = $this->invite($this->meetingIn(175), [], [
-            ['PA One', 'pa1@example.com'],
-            ['PA Two', 'pa2@example.com'],
+        AppSetting::put(AppSetting::REMINDER_INTERVAL_HOURS, 1);
+        $this->invite($this->meetingAt('18:00'));
+
+        $this->assertSame(3, $this->runAt($this->everyMinuteUntil('18:00')));
+        $this->assertEquals(
+            ['15:00', '16:00', '17:00'],
+            ReminderLog::orderBy('due_at')->get()->map(fn ($l) => $l->due_at->format('H:i'))->all(),
+        );
+    }
+
+    public function test_reminders_stop_once_the_guest_answers(): void
+    {
+        AppSetting::put(AppSetting::REMINDER_INTERVAL_HOURS, 1);
+        $invitation = $this->invite($this->meetingAt('18:00'));
+
+        $this->assertSame(1, $this->runAt(['15:00:30']));
+        $invitation->update(['attendance_status' => 'attending']);
+
+        $this->assertSame(1, $this->runAt(['16:00:30', '17:00:30']));
+    }
+
+    public function test_never_invited_cancelled_and_responded_guests_get_no_reminders(): void
+    {
+        AppSetting::put(AppSetting::REMINDER_INTERVAL_HOURS, 1);
+        $meeting = $this->meetingAt('18:00');
+        $this->invite($meeting, ['invited_at' => null, 'vip_name' => 'Never invited']);
+        $this->invite($meeting, ['attendance_status' => 'attending', 'vip_name' => 'Answered']);
+        $this->invite($this->meetingAt('18:00', ['cancelled_at' => now()]), ['vip_name' => 'Cancelled']);
+
+        $this->assertSame(0, $this->runAt(['15:00:30', '16:00:30']));
+    }
+
+    public function test_reminder_goes_to_vip_with_pa_copied_and_pa_link(): void
+    {
+        AppSetting::put(AppSetting::REMINDER_INTERVAL_HOURS, 2);
+        $invitation = $this->invite($this->meetingAt('18:00'));
+
+        $this->runAt(['16:00:30']);
+
+        Mail::assertSent(ReminderEmail::class, fn (ReminderEmail $m) => $m->hasTo('vip@example.com')
+            && $m->hasCc('pa1@example.com')
+            && $m->contact->is($invitation->contacts->first()));
+
+        $html = (new ReminderEmail($invitation, $invitation->contacts->first(), 120))->render();
+        $this->assertStringContainsString($invitation->contacts->first()->rsvpUrl(), $html);
+        $this->assertStringContainsString('2 hours', $html);
+    }
+
+    public function test_big_event_guests_are_reminded_only_until_their_link_expires(): void
+    {
+        AppSetting::put(AppSetting::REMINDER_INTERVAL_HOURS, 4);
+        $guest = Invitation::create([
+            'vip_name' => 'Event guest', 'vip_email' => 'g@example.com', 'attendance_status' => 'pending',
+            'invited_at' => now(), 'expires_at' => Carbon::parse('2026-11-21 08:00'),
         ]);
-        [$pa1, $pa2] = $invitation->contacts->sortBy('id')->values()->all();
+        Invitation::create([
+            'vip_name' => 'No deadline', 'vip_email' => 'n@example.com', 'attendance_status' => 'pending', 'invited_at' => now(),
+        ]);
 
+        foreach (['18:00:30', '22:00:30', '23:59:00'] as $t) {
+            $this->runAt([$t]);
+        }
+        $this->travelTo(Carbon::parse('2026-11-21 02:00:30'));
+        $this->artisan('reminders:dispatch');
+        $this->travelTo(Carbon::parse('2026-11-21 06:00:30'));
+        $this->artisan('reminders:dispatch');
+        $this->travelTo(Carbon::parse('2026-11-21 10:00:30'));
         $this->artisan('reminders:dispatch');
 
-        Mail::assertSent(ReminderEmail::class, fn (ReminderEmail $m) => $m->hasTo('vip@example.com'));
-        Mail::assertSent(ReminderEmail::class, fn (ReminderEmail $m) => $m->hasTo('pa1@example.com') && $m->contact->is($pa1));
-        Mail::assertSent(ReminderEmail::class, fn (ReminderEmail $m) => $m->hasTo('pa2@example.com') && $m->contact->is($pa2));
-        Mail::assertSentCount(3);
-        $this->assertSame('sent', ReminderLog::first()->status);
+        $this->assertSame(4, ReminderLog::where('invitation_id', $guest->id)->count());
+        Mail::assertNotSent(ReminderEmail::class, fn ($m) => $m->hasTo('n@example.com'));
     }
 
-    public function test_reminder_email_renders_with_the_contacts_link(): void
+    public function test_unanswered_guests_count_as_not_attending_once_the_meeting_starts(): void
     {
-        $invitation = $this->invite($this->meetingIn(25));
-        $contact = $invitation->contacts->first();
+        $meeting = $this->meetingAt('18:00');
+        $pending = $this->invite($meeting, ['vip_name' => 'Silent']);
+        $answered = $this->invite($meeting, ['vip_name' => 'Yes', 'attendance_status' => 'attending']);
+        $other = $this->invite($this->meetingAt('20:00'), ['vip_name' => 'Later meeting']);
 
-        $html = (new ReminderEmail($invitation, $invitation->meeting, 30, $contact, $contact->email))->render();
+        $this->travelTo(Carbon::parse('2026-11-20 17:59'));
+        $this->artisan('invitations:close-unanswered');
+        $this->assertSame('pending', $pending->fresh()->attendance_status);
 
-        $this->assertStringContainsString($contact->rsvpUrl(), $html);
-        $this->assertStringContainsString('30 minutes', $html);
+        $this->travelTo(Carbon::parse('2026-11-20 18:00:30'));
+        $this->artisan('invitations:close-unanswered')->expectsOutput('Marked 1 unanswered invitation(s) as not attending.');
+
+        $this->assertSame('not_attending', $pending->fresh()->attendance_status);
+        $this->assertSame('No response', $pending->fresh()->statusLabel());
+        $this->assertSame('attending', $answered->fresh()->attendance_status);
+        $this->assertSame('pending', $other->fresh()->attendance_status);
+
+        $pending->fresh()->update(['attendance_status' => 'attending']);
+        $this->assertNull($pending->fresh()->no_response_at);
+        $this->assertSame('Attending', $pending->fresh()->statusLabel());
     }
 
     public function test_database_queue_is_drained_by_the_scheduled_worker_command(): void
     {
         config(['queue.default' => 'database']);
-        $this->invite($this->meetingIn(1435));
+        AppSetting::put(AppSetting::REMINDER_INTERVAL_HOURS, 2);
+        $this->invite($this->meetingAt('18:00'));
 
-        $this->artisan('reminders:dispatch');
+        $this->runAt(['16:00:30']);
         Mail::assertNothingSent();
-        $this->assertSame('queued', ReminderLog::first()->status);
+        $this->assertSame('queued', ReminderLog::sole()->status);
 
         $this->artisan('queue:work database --stop-when-empty --max-time=50 --tries=3')->assertSuccessful();
 
         Mail::assertSentCount(1);
-        $this->assertSame('sent', ReminderLog::first()->status);
-    }
-
-    public function test_vip_without_pa_gets_a_contact_and_a_reminder(): void
-    {
-        $invitation = $this->invite($this->meetingIn(1435), [], []);
-
-        $this->artisan('reminders:dispatch');
-
-        Mail::assertSent(ReminderEmail::class, fn (ReminderEmail $m) => $m->hasTo('vip@example.com')
-            && $m->contact->email === 'vip@example.com');
-        $this->assertSame(1, $invitation->contacts()->count());
-    }
-
-    public function test_invitation_without_contacts_is_logged_as_skipped(): void
-    {
-        $this->invite($this->meetingIn(1435), ['vip_email' => null], []);
-
-        $this->artisan('reminders:dispatch');
-
-        Mail::assertNothingSent();
-        $this->assertSame('skipped', ReminderLog::first()->status);
+        $this->assertSame('sent', ReminderLog::sole()->status);
     }
 }

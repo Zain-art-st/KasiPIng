@@ -13,6 +13,11 @@ class ListInvitations extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
+            \App\Filament\Actions\AttendanceSheetAction::make(fn () => new \App\Services\AttendanceSheet(
+                title: \App\Models\FormSettings::current()->page_heading,
+                subtitle: null,
+                invitations: \App\Models\Invitation::whereNull('meeting_id')->get(),
+            )),
             CreateAction::make(),
         ];
     }

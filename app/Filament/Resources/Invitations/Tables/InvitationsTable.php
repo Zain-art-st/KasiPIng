@@ -36,13 +36,19 @@ class InvitationsTable
                     ->label('VIP Email')
                     ->searchable(),
                 TextColumn::make('attendance_status')
+                    ->label('Status')
                     ->badge()
-                    ->colors([
-                        'warning' => 'pending',
-                        'success' => 'attending',
-                        'info' => 'representative_attending',
-                        'danger' => 'not_attending',
-                    ]),
+                    ->formatStateUsing(fn ($state, Invitation $record) => $record->statusLabel())
+                    ->color(fn (Invitation $record) => match (true) {
+                        $record->no_response_at !== null && $record->attendance_status === 'not_attending' => 'gray',
+                        $record->attendance_status === 'attending' => 'success',
+                        $record->attendance_status === 'representative_attending' => 'info',
+                        $record->attendance_status === 'not_attending' => 'danger',
+                        default => 'warning',
+                    })
+                    ->tooltip(fn (Invitation $record) => $record->no_response_at
+                        ? 'Never answered; counted as not attending since '.$record->no_response_at->format('j M, g:i A')
+                        : null),
                 TextColumn::make('invited_at')
                     ->label('Invited')
                     ->since()
@@ -99,7 +105,6 @@ class InvitationsTable
             ]);
     }
 
-    /** Row button: send to this one guest. */
     public static function sendOneAction(): Action
     {
         return Action::make('send')
@@ -114,7 +119,6 @@ class InvitationsTable
             ->action(fn (Invitation $record) => static::sendMany([$record]));
     }
 
-    /** Header button: send to everyone in $query who has not been invited yet. */
     public static function sendNotInvitedAction(Closure $query): Action
     {
         $notInvited = fn () => $query()->whereNull('invited_at');
@@ -129,7 +133,6 @@ class InvitationsTable
             ->action(fn () => static::sendMany($notInvited()->with('contacts')->get()));
     }
 
-    /** Send to each invitation and show one summary notification. */
     public static function sendMany(iterable $invitations): void
     {
         $sent = 0;
@@ -171,7 +174,6 @@ class InvitationsTable
         $notification->send();
     }
 
-    /** Hidden-by-default columns with the answers to each extra RSVP question. */
     private static function customFieldColumns(): array
     {
         return CustomFieldDefinition::orderBy('sort_order')->get()

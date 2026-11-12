@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class FormSettings extends Model
 {
-    /** Wording used until the secretariat saves their own (matches the migration defaults). */
     public const DEFAULTS = [
         'page_heading' => 'Independence Day Attendance Confirmation',
         'intro_text' => null,
@@ -39,13 +38,11 @@ class FormSettings extends Model
         'thank_you_message',
     ];
 
-    /** The saved settings, or the defaults when nothing has been saved yet (not persisted). */
     public static function current(): self
     {
         return static::query()->first() ?? new static;
     }
 
-    /** Saved values with blanks replaced by defaults, for filling the settings form. */
     public function formState(): array
     {
         $state = [];

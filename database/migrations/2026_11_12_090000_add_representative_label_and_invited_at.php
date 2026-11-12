@@ -13,7 +13,6 @@ return new class extends Migration
         });
 
         Schema::table('invitations', function (Blueprint $table) {
-            // When the invitation email was last sent, so the admin can see who has not been invited yet.
             $table->timestamp('invited_at')->nullable()->after('expires_at');
         });
     }

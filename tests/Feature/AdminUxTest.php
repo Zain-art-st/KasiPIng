@@ -64,7 +64,7 @@ class AdminUxTest extends TestCase
         $this->get('/rsvp/'.$contact->token)->assertOk()
             ->assertSee('Waktu tiba')
             ->assertSee('Wakil hadir')
-            ->assertSee('Will you be attending?'); // untouched default still filled in
+            ->assertSee('Will you be attending?');
     }
 
     public function test_extra_questions_preview_shows_unsaved_questions(): void
@@ -100,7 +100,7 @@ class AdminUxTest extends TestCase
             ->callAction(TestAction::make('sendNotInvited')->table());
 
         Mail::assertSent(InvitationEmail::class, fn ($m) => $m->hasTo('two@example.com'));
-        Mail::assertSentCount(2); // "one" was already invited, so skipped
+        Mail::assertSentCount(2);
     }
 
     public function test_big_event_list_only_sends_to_standalone_guests(): void

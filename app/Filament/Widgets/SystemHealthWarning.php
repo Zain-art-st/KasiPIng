@@ -8,11 +8,6 @@ use Carbon\Carbon;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\Cache;
 
-/**
- * Dashboard banner shown only when something background-related is broken:
- * the scheduler has stopped (so no reminders or calendar sync), or the
- * Google Calendar sync is failing.
- */
 class SystemHealthWarning extends Widget
 {
     protected string $view = 'filament.widgets.system-health-warning';
@@ -28,7 +23,6 @@ class SystemHealthWarning extends Widget
         return static::problems() !== [];
     }
 
-    /** @return array<int, array{title: string, message: string, url: ?string}> */
     public static function problems(): array
     {
         $problems = [];

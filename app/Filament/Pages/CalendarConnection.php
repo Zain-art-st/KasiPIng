@@ -19,7 +19,7 @@ class CalendarConnection extends Page
 
     protected static ?string $title = 'Google Calendar Connection';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 5;
 
     public function getSubheading(): ?string
     {

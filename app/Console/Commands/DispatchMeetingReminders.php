@@ -3,51 +3,67 @@
 namespace App\Console\Commands;
 
 use App\Jobs\SendMeetingReminder;
-use App\Models\Meeting;
+use App\Models\AppSetting;
+use App\Models\Invitation;
 use App\Models\ReminderLog;
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\Builder;
 
 class DispatchMeetingReminders extends Command
 {
     protected $signature = 'reminders:dispatch';
 
-    protected $description = 'Queue escalating reminders for pending meeting attendees';
+    protected $description = 'Queue repeating reminders for guests who have not answered yet';
 
     public function handle(): int
     {
-        $intervals = config('reminders.intervals');
-        $grace = config('reminders.grace_minutes');
+        $hours = AppSetting::reminderIntervalHours();
+
+        if ($hours === 0) {
+            $this->info('Reminders are off.');
+
+            return self::SUCCESS;
+        }
+
+        // Reminders repeat every $hours (Settings → Reminders) counted from invited_at, until the meeting starts.
+        $step = $hours * 3600;
         $now = now();
-
-        $meetings = Meeting::query()
-            ->whereNull('cancelled_at')
-            ->where('starts_at', '>', $now)
-            ->where('starts_at', '<=', $now->copy()->addMinutes(max($intervals)))
-            ->get();
-
         $dispatched = 0;
 
-        foreach ($meetings as $meeting) {
-            $minutesToStart = ($meeting->starts_at->getTimestamp() - $now->getTimestamp()) / 60;
+        $invitations = Invitation::query()
+            ->where('attendance_status', 'pending')
+            ->whereNotNull('invited_at')
+            ->where(fn (Builder $q) => $q
+                ->whereHas('meeting', fn (Builder $m) => $m->whereNull('cancelled_at')->where('starts_at', '>', $now))
+                ->orWhere(fn (Builder $s) => $s->whereNull('meeting_id')->where('expires_at', '>', $now)))
+            ->with('meeting')
+            ->get();
 
-            foreach ($intervals as $interval) {
-                if ($minutesToStart > $interval || $minutesToStart <= $interval - $grace) {
-                    continue;
-                }
+        foreach ($invitations as $invitation) {
+            $deadline = $invitation->responseDeadline();
+            $slot = intdiv($now->getTimestamp() - $invitation->invited_at->getTimestamp(), $step);
 
-                $pending = $meeting->invitations()->where('attendance_status', 'pending')->get();
+            if ($slot < 1) {
+                continue;
+            }
 
-                foreach ($pending as $invitation) {
-                    $log = ReminderLog::firstOrCreate(
-                        ['invitation_id' => $invitation->id, 'interval_minutes' => $interval],
-                        ['status' => 'queued'],
-                    );
+            $dueAt = $invitation->invited_at->copy()->addSeconds($slot * $step);
 
-                    if ($log->wasRecentlyCreated) {
-                        SendMeetingReminder::dispatch($log->id);
-                        $dispatched++;
-                    }
-                }
+            if (! $deadline || $dueAt->gte($deadline)) {
+                continue;
+            }
+
+            $log = ReminderLog::firstOrCreate(
+                ['invitation_id' => $invitation->id, 'due_at' => $dueAt],
+                [
+                    'status' => 'queued',
+                    'interval_minutes' => min(65535, (int) ceil(($deadline->getTimestamp() - $now->getTimestamp()) / 60)),
+                ],
+            );
+
+            if ($log->wasRecentlyCreated) {
+                SendMeetingReminder::dispatch($log->id);
+                $dispatched++;
             }
         }
 

@@ -63,7 +63,6 @@ class InvitationForm
             ]);
     }
 
-    /** Read-only answers to the extra RSVP questions (edited via Settings → Extra RSVP Questions). */
     private static function customAnswers(): Section
     {
         $fields = CustomFieldDefinition::orderBy('sort_order')->get();
