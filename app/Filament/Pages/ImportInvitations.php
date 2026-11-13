@@ -8,6 +8,7 @@ use App\Models\CustomFieldValue;
 use App\Models\Invitation;
 use App\Models\InvitationContact;
 use App\Models\Meeting;
+use App\Models\PrecedenceRank;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
@@ -54,6 +55,7 @@ class ImportInvitations extends Page
         $fixed = [
             'vip_name' => 'VIP Name',
             'organization' => 'Organization',
+            'position_title' => 'Position (jawatan) — also matched to the Kekananan list',
             'vip_email' => 'VIP Email',
             'vip_phone' => 'VIP Phone',
             'pa_name' => 'Contact (PA) Name',
@@ -243,6 +245,8 @@ class ImportInvitations extends Page
                     'vip_email' => $getMappedValue('vip_email') ?: null,
                     'vip_phone' => $getMappedValue('vip_phone') ?: null,
                     'attendance_status' => 'pending',
+                    'position_title' => $getMappedValue('position_title') ?: null,
+                    'precedence_rank_id' => PrecedenceRank::bestMatch($getMappedValue('position_title'))?->id,
                 ]
             );
 

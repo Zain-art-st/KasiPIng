@@ -1,0 +1,253 @@
+# code | title | holder | aliases
+# Rows are in order of precedence (most senior first). A row with a code is a Warta category;
+# rows without a code are named positions inside the category above them.
+# Sources: Warta Kerajaan Persekutuan P.U.(B) 506 (13 Nov 2014) and BIUPA Senarai Keutamaan Persekutuan (3 Nov 2026).
+1 | Yang di-Pertuan Agong | | YDPA, Agong
+2 | Raja Permaisuri Agong | |
+3 | Raja-Raja dan Pemangku Raja | | Sultan, Raja, Pemangku Raja
+4 | Yang di-Pertua Negeri | | TYT, YDP Negeri
+5 | Bekas Raja Permaisuri Agong yang menerima saraan Diraja | |
+6 | Perdana Menteri | | PM
+ | Perdana Menteri; Menteri Kewangan | YAB Dato' Seri Anwar bin Ibrahim | PM
+7 | Timbalan Perdana Menteri | | TPM
+ | Timbalan Perdana Menteri; Menteri Kemajuan Desa dan Wilayah | YAB Dato' Seri Dr. Ahmad Zahid bin Hamidi | TPM
+ | Timbalan Perdana Menteri; Menteri Peralihan Tenaga dan Transformasi Air | YAB Datuk Amar Haji Fadillah bin Haji Yusof | TPM
+ | Premier Sarawak | YAB Tan Sri Datuk Patinggi (Dr.) Abang Haji Abdul Rahman Zohari bin Tun Datuk Abang Haji Openg |
+ | Ketua Menteri Sabah | YAB Datuk Seri Panglima Haji Hajiji bin Haji Noor |
+7A | Bakal Raja (Tengku Mahkota / Raja Muda) | | Tengku Mahkota, Raja Muda
+8 | Ahli Darjah Utama Seri Mahkota Negara (D.M.N.) | | DMN
+9 | Ahli Seri Maharaja Mangku Negara (S.M.N.) | | SMN, Tun
+10 | Bekas Perdana Menteri | |
+11 | Bekas Timbalan Perdana Menteri | |
+12 | Ahli Seri Setia Mahkota (S.S.M.) | | SSM
+12A | Dato Undang Yang Empat Negeri Sembilan dan Tengku Besar Tampin | | Undang
+13 | Ketua Hakim Negara | | KHN
+ | Ketua Hakim Negara | YAA Tun Wan Ahmad Farid bin Wan Salleh | KHN
+14 | Yang di-Pertua Dewan Negara | | YDP Dewan Negara
+ | Yang di-Pertua Dewan Negara | YB Senator Dato Sri Awang Bemee bin Awang Ali Basah |
+15 | Yang di-Pertua Dewan Rakyat | | Speaker Dewan Rakyat
+ | Yang di-Pertua Dewan Rakyat | YB Tan Sri Dato' Dr. Johari bin Abdul |
+16 | Ahli Jemaah Menteri | | Menteri
+ | Menteri Pengangkutan | YB Tuan Loke Siew Fook | MOT
+ | Menteri Pertanian dan Keterjaminan Makanan | YB Datuk Seri Haji Mohamad bin Sabu | KPKM
+ | Menteri Perumahan dan Kerajaan Tempatan | YB Tuan Nga Kor Ming | KPKT
+ | Menteri Luar Negeri | YB Dato' Seri Utama Haji Mohamad bin Haji Hasan | Wisma Putra
+ | Menteri Kerja Raya | YB Dato' Sri Alexander Nanta Linggi | KKR
+ | Menteri Dalam Negeri | YB Senator Datuk Seri Saifuddin Nasution bin Ismail | KDN
+ | Menteri Pertahanan | YB Dato' Seri Mohamed Khaled bin Nordin | MINDEF
+ | Menteri Sains, Teknologi dan Inovasi | YB Datuk Chang Lih Kang | MOSTI
+ | Menteri Pembangunan Wanita, Keluarga dan Masyarakat | YB Dato' Sri Hajah Nancy binti Shukri | KPWKM
+ | Menteri di Jabatan Perdana Menteri (Undang-Undang dan Reformasi Institusi) | YB Dato' Sri Azalina Othman Said | JPM
+ | Menteri Pendidikan Tinggi | YB Senator Dato' Seri DiRaja Dr. Zambry bin Abd Kadir | KPT
+ | Menteri Pelancongan, Seni dan Budaya | YB Dato Sri Tiong King Sing | MOTAC
+ | Menteri Komunikasi | YB Dato' Seri Ahmad Fahmi bin Mohamed Fadzil | KKOM
+ | Menteri Pendidikan | YB Datuk Seri Fadhlina binti Sidek | KPM
+ | Menteri Perpaduan Negara | YB Datuk Aaron Ago anak Dagang | KPN Perpaduan
+ | Menteri di Jabatan Perdana Menteri (Wilayah Persekutuan) | YB Puan Hannah Yeoh Tseow Suan | JPM
+ | Menteri Pelaburan, Perdagangan dan Industri | YB Datuk Seri Johari bin Abdul Ghani | MITI
+ | Menteri Perdagangan Dalam Negeri dan Kos Sara Hidup | YB Datuk Armizan bin Mohd Ali | KPDN
+ | Menteri Digital | YB Tuan Gobind Singh Deo | KD
+ | Menteri Kesihatan | YB Datuk Seri Dr. Haji Dzulkefly bin Ahmad | KKM
+ | Menteri Kewangan II | YB Senator Datuk Seri Amir Hamzah bin Azizan | MOF
+ | Menteri Pembangunan Usahawan dan Koperasi | YB Tuan Steven Sim Chee Keong | KUSKOP
+ | Menteri Perladangan dan Komoditi | YB Datuk Seri Dr. Noraini binti Ahmad | KPK
+ | Menteri Sumber Asli dan Kelestarian Alam | YB Dato' Sri Arthur Joseph Kurup | NRES
+ | Menteri Sumber Manusia | YB Dato' Sri Ramanan Ramakrishnan | KESUMA
+ | Menteri Ekonomi | YB Tuan Haji Akmal Nasrullah bin Mohd Nasir | KE
+ | Menteri di Jabatan Perdana Menteri (Sabah dan Sarawak) | YB Datuk Ts. Mustapha @ Mohd Yunus bin Sakmud | JPM
+ | Menteri di Jabatan Perdana Menteri (Hal Ehwal Agama) | YB Senator Dr. Zulkifli bin Hasan | JPM
+ | Menteri Belia dan Sukan | YB Dr. Mohammed Taufiq bin Johari | KBS
+17 | Setiausaha Jemaah Menteri / Ketua Setiausaha Negara | | KSN
+ | Ketua Setiausaha Negara | YBhg. Tan Sri Dr. Shamsul Azri bin Abu Bakar | KSN
+17A | Menteri Besar dan Ketua Menteri | | MB, KM
+ | Menteri Besar Terengganu | YAB Dato' Seri Ir. Dr. Ahmad Samsuri bin Mokhtar | MB
+ | Ketua Menteri Pulau Pinang | YAB Tuan Chow Kon Yeow | KM
+ | Menteri Besar Pahang | YAB Dato' Sri Diraja Haji Wan Rosdy bin Wan Ismail | MB
+ | Menteri Besar Selangor | YAB Dato' Seri Amirudin bin Shari | MB
+ | Menteri Besar Kedah | YAB Dato' Seri Haji Muhammad Sanusi bin Md Nor | MB
+ | Menteri Besar Perak | YAB Dato' Seri Saarani bin Mohamad | MB
+ | Menteri Besar Johor | YAB Dato' Onn Hafiz bin Ghazi | MB
+ | Ketua Menteri Melaka | YAB Datuk Seri Utama Ab Rauf bin Yusoh | KM
+ | Menteri Besar Kelantan | YAB Dato' Haji Mohd Nassuruddin bin Daud | MB
+ | Menteri Besar Perlis | YAB Tuan Abu Bakar bin Hamzah | MB
+ | Menteri Besar Negeri Sembilan | YAB Dato' Haji Ismail bin Haji Lasim | MB
+18 | Presiden Mahkamah Rayuan | |
+ | Presiden Mahkamah Rayuan | YAA Datuk Seri Abu Bakar bin Jais |
+19 | Hakim Besar Mahkamah Tinggi di Malaya | |
+ | Hakim Besar Malaya | YAA Datuk Seri Hashim bin Hamzah |
+20 | Hakim Besar Mahkamah Tinggi di Sabah dan Sarawak | |
+ | Hakim Besar Sabah dan Sarawak | YAA Dato Sri Hajah Azizah binti Haji Nawawi |
+21 | Peguam Negara | | AG
+ | Peguam Negara | YBhg. Tan Sri Mohd Dusuki bin Mokhtar | AG
+22 | Panglima Angkatan Tentera | | PAT
+ | Panglima Angkatan Tentera | YBhg. Jeneral Tan Sri Dato' Seri Haji Malek Razak bin Sulaiman | PAT
+23 | Ketua Polis Negara | | KPN, IGP
+ | Ketua Polis Negara | YBhg. IG Tan Sri Dato' Seri Haji Mohd Khalid bin Haji Ismail | KPN, IGP
+24 | Ketua Pengarah Perkhidmatan Awam | | KPPA
+ | Ketua Pengarah Perkhidmatan Awam | YBhg. Tan Sri Dr. Wan Ahmad Dahlan bin Haji Abdul Aziz | KPPA
+25 | Ketua Audit Negara | |
+ | Ketua Audit Negara | YBhg. Dato' Seri Wan Suraya Wan Mohd Radzi |
+26 | Ketua Hakim Syarie | |
+ | Ketua Hakim Syarie | YAA Dato' Haji Mohd Amran bin Haji Mat Zain |
+27 | Timbalan Yang di-Pertua Dewan Negara | |
+ | Timbalan Yang di-Pertua Dewan Negara | YB Senator Datuk Nur Jazlan bin Tan Sri Mohamed |
+28 | Timbalan Yang di-Pertua Dewan Rakyat | | Timbalan Speaker
+ | Timbalan Yang di-Pertua Dewan Rakyat | YB Dato' Sri Dr. Ramli bin Dato' Mohd Nor |
+ | Timbalan Yang di-Pertua Dewan Rakyat | YB Puan Alice Lau Kiong Yieng |
+29 | Ketua Pembangkang di Parlimen | |
+ | Ketua Pembangkang di Parlimen | YB Dato' Seri Hamzah bin Zainudin |
+30 | Timbalan Menteri | | TM
+ | Timbalan Menteri Kerja Raya | YB Datuk Seri Dr. Haji Ahmad bin Haji Maslan | TM
+ | Timbalan Menteri Kemajuan Desa dan Wilayah | YB Datuk Hajah Rubiah binti Wang | TM
+ | Timbalan Menteri Pengangkutan | YB Datuk Haji Hasbi bin Haji Habibollah | TM
+ | Timbalan Menteri Pertanian dan Keterjaminan Makanan | YB Datuk Chan Foong Hin | TM
+ | Timbalan Menteri Kesihatan | YB Dato Hajah Hanifah Hajar Taib | TM
+ | Timbalan Menteri Pertahanan | YB Tuan Adly bin Zahari | TM
+ | Timbalan Menteri Peralihan Tenaga dan Transformasi Air | YB Dato' Sri Abdul Rahman bin Haji Mohamad | TM
+ | Timbalan Menteri Dalam Negeri | YB Datuk Seri Dr. Shamsul Anuar bin Haji Nasarah | TM
+ | Timbalan Menteri Kewangan | YB Tuan Liew Chin Tong | TM
+ | Timbalan Menteri Sains, Teknologi dan Inovasi | YB Dato' Dr. Haji Mohammad Yusof bin Apdal | TM
+ | Timbalan Menteri Perumahan dan Kerajaan Tempatan | YB Datuk Aiman Athirah binti Sabu | TM
+ | Timbalan Menteri Perdagangan Dalam Negeri dan Kos Sara Hidup | YB Senator Datuk Dr. Fuziah binti Salleh | TM
+ | Timbalan Menteri Perladangan dan Komoditi | YB Dato' Sri Huang Tiong Sii | TM
+ | Timbalan Menteri Pembangunan Usahawan dan Koperasi | YB Datuk Mohamad bin Alamin | TM
+ | Timbalan Menteri Sumber Manusia | YB Datuk Khairul Firdaus bin Akbar Khan | TM
+ | Timbalan Menteri Komunikasi | YB Puan Teo Nie Ching | TM
+ | Timbalan Menteri Pembangunan Wanita, Keluarga dan Masyarakat | YB Puan Lim Hui Ying | TM
+ | Timbalan Menteri Pendidikan Tinggi | YB Tuan Adam Adli bin Abd Halim | TM
+ | Timbalan Menteri Luar Negeri | YB Dato Lukanisman bin Awang Sauni | TM
+ | Timbalan Menteri Digital | YB Datuk Ugak anak Kumbong | TM
+ | Timbalan Menteri di Jabatan Perdana Menteri (Undang-Undang dan Reformasi Institusi) | YB Tuan M. Kulasegaran a/l V. Murugeson | TM
+ | Timbalan Menteri Pendidikan | YB Tuan Wong Kah Woh | TM
+ | Timbalan Menteri Pelaburan, Perdagangan dan Industri | YB Tuan Sim Tze Tzin | TM
+ | Timbalan Menteri Ekonomi | YB Dato' Sri Mohd Shahar bin Abdullah | TM
+ | Timbalan Menteri Perpaduan Negara | YB Tuan Yuneswaran a/l Ramaraj | TM
+ | Timbalan Menteri Sumber Asli dan Kelestarian Alam | YB Tuan Syed Ibrahim bin Syed Noh | TM
+ | Timbalan Menteri Belia dan Sukan | YB Tuan Mordi anak Bimol | TM
+ | Timbalan Menteri Pelancongan, Seni dan Budaya | YB Tuan Chiew Choon Man | TM
+ | Timbalan Menteri di Jabatan Perdana Menteri (Wilayah Persekutuan) | YB Datuk Lo Su Fui | TM
+ | Timbalan Menteri di Jabatan Perdana Menteri (Hal Ehwal Agama) | YB Senator Puan Marhamah binti Rosli | TM
+31 | Pesuruhjaya Tinggi, Duta Besar, Menteri Yang Mutlak, Pemangku Pesuruhjaya Tinggi dan Kuasa Usaha | | Duta, Ambassador, High Commissioner
+32 | Hakim Mahkamah Persekutuan | |
+33 | Hakim Mahkamah Rayuan | |
+34 | Setiausaha Parlimen | |
+35 | Ahli Panglima Mangku Negara (P.M.N.) | | PMN
+36 | Pegawai Gred Utama Turus I dan II | | Turus I, Turus II
+ | Setiausaha Kerajaan Sarawak | YB Datuk Amar Haji Mohamad Abu Bakar bin Marzuki | SUK Sarawak
+ | Setiausaha Kerajaan Negeri Sabah | YB Datuk Zainudin bin Aman | SUK Sabah
+ | Peguam Cara Negara, Jabatan Peguam Negara | YBhg. Dato' Suzana binti Atan | SG
+ | Ketua Setiausaha Perbendaharaan, Kementerian Kewangan | YBhg. Tan Sri Johan Mahmood Merican | KSP
+ | Ketua Pesuruhjaya, Suruhanjaya Pencegahan Rasuah Malaysia (SPRM) | YBhg. Dato' Sri KPj Abd Halim bin Aman | SPRM, MACC
+ | Peguam Cara Negara II, Jabatan Peguam Negara | YBhg. Dato' Seri Umar Saifuddin bin Jaafar |
+ | Ketua Bahagian Pendakwaan, Jabatan Peguam Negara | YBhg. Dato' Masri bin Mohd Daud |
+37 | Pengerusi Majlis Rasmi Kerajaan | |
+ | Timbalan Ketua Setiausaha Kanan, Jabatan Perdana Menteri | YBhg. Datuk Abd Shukor bin Mahmood | TKSU Kanan JPM
+38 | Ketua Setiausaha Kementerian | | KSU
+ | Ketua Setiausaha, Kementerian Pertahanan | YBhg. Datuk Lokman Hakim bin Ali | KSU
+ | Ketua Setiausaha, Kementerian Pendidikan Tinggi | YBhg. Datuk Ts. Dr. Haji Aminuddin bin Hassim | KSU
+ | Ketua Setiausaha, Kementerian Kesihatan | YBhg. Datuk Seri Haji Hasnol Zam Zam bin Haji Ahmad | KSU
+ | Ketua Setiausaha, Kementerian Pertanian dan Keterjaminan Makanan | YBhg. Datuk Seri Isham bin Ishak | KSU
+ | Ketua Setiausaha, Kementerian Kemajuan Desa dan Wilayah | YBhg. Dato' Sri Suriani binti Dato' Ahmad | KSU
+ | Ketua Setiausaha, Kementerian Perladangan dan Komoditi | YBhg. Dato' Yusran Shah bin Mohd Yusof | KSU
+ | Ketua Setiausaha, Kementerian Sumber Manusia | YBhg. Datuk Azman bin Mohd Yusof | KSU
+ | Ketua Setiausaha, Kementerian Luar Negeri | YBhg. Tan Sri Amran bin Mohamed Zin | KSU
+ | Ketua Setiausaha, Kementerian Pembangunan Wanita, Keluarga dan Masyarakat | YBhg. Datuk Dr. Maziah binti Che Yusoff | KSU
+ | Ketua Setiausaha, Kementerian Ekonomi | YBhg. Datuk Seri Nor Azmie bin Diron | KSU
+ | Ketua Pengarah, Unit Penyelarasan Pelaksanaan, Jabatan Perdana Menteri | YBhg. Datuk Seri Sollehuddin Alyubi bin Zakaria | ICU
+ | Ketua Setiausaha, Kementerian Perumahan dan Kerajaan Tempatan | YBhg. Datuk Wira Dr. M Noor Azman bin Taib | KSU
+ | Ketua Setiausaha, Kementerian Dalam Negeri | YBhg. Datuk Dr. Awang Alik bin Jeman | KSU
+ | Ketua Setiausaha, Kementerian Sumber Asli dan Kelestarian Alam | YBhg. Datuk Wira Anis Rizana binti Mohd Zainudin @ Mohd Zainuddin | KSU
+ | Ketua Setiausaha, Kementerian Kerja Raya | YBhg. Dato' Seri Azman bin Ibrahim | KSU
+ | Ketua Setiausaha, Kementerian Peralihan Tenaga dan Transformasi Air | YBhg. Dato' Sri Haji Mad Zaidi bin Mohd Karli | KSU
+ | Ketua Setiausaha, Kementerian Pengangkutan | YBhg. Dato' Seri Jana Santhiran a/l Muniayan | KSU
+ | Ketua Setiausaha, Kementerian Pembangunan Usahawan dan Koperasi | YBhg. Dato' Sri Khairul Dzaimee bin Daud | KSU
+ | Ketua Setiausaha, Kementerian Pendidikan | YBhg. Dato' Wan Hashim bin Wan Rahim | KSU
+ | Ketua Setiausaha, Kementerian Perdagangan Dalam Negeri dan Kos Sara Hidup | YBhg. Dato' Seri Mohd Sayuthi bin Bakar | KSU
+ | Ketua Setiausaha, Kementerian Komunikasi | YBhg. Datuk Abdul Halim bin Hamzah | KSU
+ | Ketua Setiausaha, Kementerian Sains, Teknologi dan Inovasi | YBhg. Dato' Ts. Dr. Nagulendran a/l Kangayatkarasu | KSU
+ | Ketua Setiausaha, Kementerian Pelaburan, Perdagangan dan Industri | YBhg. Datuk Hairil Yahri bin Yaacob | KSU
+ | Ketua Setiausaha, Kementerian Belia dan Sukan | YBhg. Dato' Rahimi bin Ismail | KSU
+ | Ketua Setiausaha, Kementerian Pelancongan, Seni dan Budaya | YBhg. Dato' Shaharuddin bin Abu Sohot | KSU
+ | Ketua Setiausaha, Kementerian Perpaduan Negara | YBhg. Dato' Haslina binti Abdul Hamid | KSU
+ | Ketua Setiausaha, Kementerian Digital | YBhg. Datuk Fabian Bigar | KSU
+39 | Pegawai Gred Utama Turus III | | Turus III
+ | Datuk Pengelola Bijaya Diraja | YBhg. Tan Sri Dato' Dr. Haji Azmi bin Rohani |
+ | Ketua Pengarah, Lembaga Getah Malaysia (LGM) | YBhg. Dato' Dr. Zairossani bin Mohd Nor | LGM
+ | Peguam Besar Negeri Sarawak | YBhg. Dato Sri Saferi bin Ali |
+ | Ketua Pegawai Eksekutif, Lembaga Hasil Dalam Negeri Malaysia (LHDNM) | YBhg. Datuk Abu Tariq bin Jamaluddin | LHDN
+ | Timbalan Ketua Setiausaha (Kabinet), Jabatan Perdana Menteri | YBhg. Datuk Dr. Farizah binti Ahmad | TKSU
+ | Ketua Pengarah Keselamatan Negara, Majlis Keselamatan Negara | YBhg. Dato' Raja Nushirwan bin Zainal Abidin | MKN
+ | Timbalan Ketua Pengarah Perkhidmatan Awam (Pembangunan), JPA | YBhg. Datuk Dr. Mohd Bakhari bin Ismail | TKPPA
+ | Ketua Pengarah Kesihatan, Kementerian Kesihatan | YBhg. Datuk Dr. Mahathar bin Abd. Wahab | KPK
+ | Ketua Pengarah Pendidikan Malaysia, Kementerian Pendidikan | YBhg. Datuk Dr. Mohd Azam bin Ahmad | KPPM
+ | Naib Canselor, Universiti Sains Malaysia (USM) | YBhg. Dato' Seri Prof. Ir. Dr. Abdul Rahman bin Mohamed | NC USM
+ | Gabenor, Bank Negara Malaysia | YBhg. Dato' Sri Shaik Abdul Rasheed bin Abdul Ghaffour | BNM
+ | Naib Canselor, Universiti Malaya (UM) | YBhg. Dato' Seri Prof. Ir. Dr. Noor Azuan bin Abu Osman | NC UM
+ | Ketua Eksekutif, Lembaga Tabung Angkatan Tentera (LTAT) | YBhg. Datuk Mohammad Ashraf bin Md Radzi | LTAT
+ | Pengerusi, Suruhanjaya Pilihan Raya (SPR) | YBhg. Dato' Sri Ramlan bin Dato' Harun | SPR
+ | Peguam Besar Negeri Sabah | YBhg. Datuk Brenndon Keith Soh |
+ | Pengarah Besar, Lembaga Kemajuan Tanah Persekutuan (FELDA) | YBhg. Dato' Dr. Suzana Idayu Wati binti Osman | FELDA
+ | Naib Canselor, Universiti Teknologi Malaysia (UTM) | YBrs. Prof. Ts. Dr. Mohd Shafry bin Mohd Rahim | NC UTM
+ | Setiausaha Kerajaan Kelantan | YB Dato' Dr. Tengku Mohamed Faziharudean bin Tengku Feissal | SUK Kelantan
+ | Pengarah Urusan Kumpulan dan Ketua Pegawai Eksekutif, Lembaga Tabung Haji | YBrs. Encik Mustakim bin Mohamad | Tabung Haji
+ | Datuk Bandar Kuala Lumpur | YBhg. Datuk Seri TPr Fadlun bin Mak Ujud | DBKL
+ | Ketua Pegawai Eksekutif, Kumpulan Wang Persaraan (KWAP) | YBhg. Dato' Jay Khairil Jeremy Abdullah | KWAP
+ | Naib Canselor, Universiti Putra Malaysia (UPM) | YBrs. Prof. Dr. Arifin Abdu | NC UPM
+ | Ketua Pegawai Eksekutif, Lembaga Pembangunan Langkawi (LADA) | YBhg. Datuk Seri Iskandar bin Datuk Haji Mohd Kaus | LADA
+ | Setiausaha Tetap Kewangan Negeri Sabah | YBhg. Datuk Mohd Sofian Alfian Nair |
+ | Timbalan Ketua Pesuruhjaya (Operasi), SPRM | YBhg. Dato' Sri TKPj. Ahmad Khusairi bin Yahaya | SPRM
+ | Ketua Setiausaha Sulit kepada Perdana Menteri | YBhg. Dato' Shahrol Anuwar bin Sarman |
+ | Setiausaha Kerajaan Terengganu | YB Dato' Haji Mohd Azmi bin Mohamad Daham | SUK Terengganu
+ | Ketua Bahagian Hal Ehwal Antarabangsa, Jabatan Peguam Negara | YBrs. Encik Alfian bin Yang Amri |
+ | Ketua Pendaftar Mahkamah Persekutuan Malaysia | YBrs. Encik Azhaniz Teh bin Azman Teh |
+ | Ketua Pengarah, Jabatan Kerja Raya (JKR) | YBhg. Dato' Ir. Haji Ibrahim bin Esa | JKR
+ | Setiausaha Kerajaan Negeri Kedah | YB Dato' Seri Haji Norizan bin Khazali | SUK Kedah
+40 | Pengerusi Suruhanjaya yang ditubuhkan di bawah Perlembagaan Persekutuan | |
+ | Pengerusi, Suruhanjaya Perkhidmatan Awam (SPA) | YBhg. Dato' Seri Dr. Ahmad Jailani bin Muhamed Yunus | SPA
+ | Pengerusi, Suruhanjaya Perkhidmatan Pendidikan (SPP) | YBhg. Dato' Haji Adzman bin Talib | SPP
+41 | Hakim Mahkamah Tinggi dan Pesuruhjaya Kehakiman | |
+42 | Ahli Panglima Setia Mahkota (P.S.M.) | | PSM, Tan Sri
+ | Penyimpan Mohor Besar Raja-Raja | YBhg. Tan Sri Syed Danial bin Syed Ahmad |
+ | Panglima Tentera Laut | YBhg. Laksamana Tan Sri Zulhelmy bin Ithnain | TLDM
+ | Panglima Tentera Darat | YBhg. Jeneral Tan Sri Azhan bin Haji Md Othman | TD
+ | Panglima Tentera Udara | YBhg. Jeneral Tan Sri Dato' Sri Haji Muhamad Norazlan bin Aris TUDM | TUDM
+43 | Gabenor Bank Negara | | BNM
+44 | Penyimpan Mohor Besar Raja-Raja | |
+45 | Datuk Paduka Maharaja Lela | |
+ | Datuk Paduka Maharaja Lela | YBhg. Datuk Azuan Effendy bin Zairakithnaini |
+46 | Profesor Diraja | |
+46A | Timbalan Menteri Besar / Timbalan Ketua Menteri | | TMB, TKM
+46B | Speaker Dewan Undangan Negeri | | Speaker DUN
+47 | Ahli Dewan Negara | | Senator
+48 | Ahli Dewan Rakyat | | Ahli Parlimen, MP
+49 | Hakim Mahkamah Rayuan Syariah | |
+50 | Panglima Tentera Darat | |
+51 | Panglima Tentera Laut | |
+52 | Panglima Tentera Udara | |
+53 | Timbalan Ketua Polis Negara | | TKPN
+54 | Ahli Panglima Jasa Negara (P.J.N.) | | PJN
+55 | Ahli Panglima Setia Diraja (P.S.D.) | | PSD
+56 | Pegawai Gred Utama 'A', pegawai Tentera dan Polis, dan Pengerusi/Ketua Badan Berkanun Persekutuan yang setaraf | | JUSA A, Gred Utama A
+ | Setiausaha Kerajaan Negeri Perak | YB Dato' Ahmad Suaidi bin Abdul Rahim | SUK Perak
+ | Setiausaha Kerajaan Negeri Sembilan | YB Dato' Mohd. Zafir bin Ibrahim | SUK Negeri Sembilan
+ | Setiausaha Kerajaan Negeri Selangor | YB Dato' Dr. Ahmad Fadzli bin Ahmad Tajuddin | SUK Selangor
+ | Setiausaha Kerajaan Johor | YB Dato' Haji Mohammed Ridha bin Dato' Haji Abd. Kadir | SUK Johor
+ | Setiausaha Kerajaan Pahang | YB Dato' Sri Nazri bin Abu Bakar | SUK Pahang
+ | Setiausaha Kerajaan Negeri Pulau Pinang | YB Dato' Dr. Jafri bin Abdul Jalil | SUK Pulau Pinang
+ | Setiausaha Kerajaan Negeri Perlis | YB Dato' Noor Azman bin Abdul Rahman | SUK Perlis
+ | Setiausaha Kerajaan Negeri Melaka | YB Datuk Wira Salhah binti Salleh | SUK Melaka
+57 | Naib Canselor Universiti | | NC, VC
+57A | Ahli Majlis Mesyuarat Kerajaan Negeri dan Menteri Negeri di Sabah/Sarawak | | EXCO
+58 | Pegawai Gred Utama 'B', pegawai Tentera dan Polis, dan Pengerusi/Ketua Badan Berkanun Persekutuan yang setaraf | | JUSA B, Gred Utama B
+58A | Penerima Anugerah Fellow Negara | |
+59 | Wakil Tempatan Pertubuhan Bangsa-Bangsa Bersatu | | UN, PBB
+60 | Pegawai Gred Utama 'C', pegawai Tentera dan Polis, dan Pengerusi/Ketua Badan Berkanun Persekutuan yang setaraf | | JUSA C, Gred Utama C
+60A | Ahli Dewan Undangan Negeri | | ADUN
+61 | Ahli Johan Mangku Negara (J.M.N.) | | JMN
+62 | Ahli Johan Setia Mahkota (J.S.M.) | | JSM
+63 | Ahli Johan Setia Diraja (J.S.D.) | | JSD
+64 | Pegawai Gred 54, pegawai Tentera dan Polis, dan Pengerusi/Ketua Badan Berkanun Persekutuan yang setaraf | | Gred 54
+65 | Setiausaha Politik | |
+66 | Pegawai Gred 52 dan pegawai Tentera dan Polis yang setaraf | | Gred 52
+67 | Konsul Besar negara-negara yang tiada perwakilan diplomatik di Malaysia | | Konsul
+99 | Tidak tersenarai (lain-lain) | | Lain-lain

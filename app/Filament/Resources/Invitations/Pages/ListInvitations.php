@@ -13,6 +13,11 @@ class ListInvitations extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
+            \Filament\Actions\Action::make('seatingPlan')
+                ->label('Seating plan')
+                ->icon('heroicon-o-squares-2x2')
+                ->color('gray')
+                ->url(fn () => \App\Filament\Pages\SeatingPlanPage::getUrl()),
             \App\Filament\Actions\AttendanceSheetAction::make(fn () => new \App\Services\AttendanceSheet(
                 title: \App\Models\FormSettings::current()->page_heading,
                 subtitle: null,

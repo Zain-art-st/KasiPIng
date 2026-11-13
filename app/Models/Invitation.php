@@ -11,6 +11,8 @@ class Invitation extends Model
     'meeting_id',
     'vip_name',
     'organization',
+    'precedence_rank_id',
+    'position_title',
     'vip_email',
     'vip_phone',
     'attendance_status',
@@ -72,6 +74,11 @@ class Invitation extends Model
     public function meeting(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
     return $this->belongsTo(Meeting::class);
+    }
+
+    public function precedenceRank(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(PrecedenceRank::class);
     }
 
     public function customFieldValues(): \Illuminate\Database\Eloquent\Relations\HasMany

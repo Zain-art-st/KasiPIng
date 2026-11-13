@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Invitations\Schemas;
 use App\Models\CustomFieldDefinition;
 use App\Models\FormSettings;
 use App\Models\Invitation;
+use App\Models\PrecedenceRank;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
@@ -23,7 +24,17 @@ class InvitationForm
                 TextInput::make('vip_name')
                     ->label('VIP name')
                     ->required(),
-                TextInput::make('organization'),
+                TextInput::make('organization')
+                    ->label('Ministry / organisation'),
+                TextInput::make('position_title')
+                    ->label('Position (jawatan)')
+                    ->placeholder('e.g. Ketua Setiausaha'),
+                Select::make('precedence_rank_id')
+                    ->label('Kekananan (rank)')
+                    ->helperText('Used to place them in seating plans. Search by position, name or short form (KSU, SUK, JUSA A…).')
+                    ->searchable()
+                    ->getSearchResultsUsing(fn (string $search) => PrecedenceRank::options($search))
+                    ->getOptionLabelUsing(fn ($value) => PrecedenceRank::find($value)?->label()),
                 TextInput::make('vip_email')
                     ->email()
                     ->label('VIP Email')
