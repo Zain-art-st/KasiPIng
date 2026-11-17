@@ -43,7 +43,13 @@ class GoogleAuthController extends Controller
         try {
             $googleUser = Socialite::driver('google')->user();
         } catch (\Throwable $e) {
-            abort(403, 'Google sign-in was cancelled or failed. Please try again.');
+            if (session()->pull('google_calendar_connect')) {
+                Notification::make()->title('Google did not finish connecting. Please try again.')->danger()->send();
+
+                return redirect(CalendarConnection::getUrl());
+            }
+
+            return $this->backToLogin('Google sign-in was cancelled or did not finish. Please try again.');
         }
 
         if (session()->pull('google_calendar_connect')) {
@@ -56,7 +62,7 @@ class GoogleAuthController extends Controller
             ->all();
 
         if (! in_array(strtolower($googleUser->email), $allowed, true)) {
-            abort(403, 'This Google account is not authorized to access this system.');
+            return $this->backToLogin('The Google account '.$googleUser->email.' is not authorised to use this system. Sign in with your secretariat account, or ask the administrator to add this one.');
         }
 
         $user = User::firstOrNew(['email' => $googleUser->email]);
@@ -73,6 +79,11 @@ class GoogleAuthController extends Controller
         request()->session()->regenerate();
 
         return redirect()->intended('/admin');
+    }
+
+    private function backToLogin(string $message)
+    {
+        return redirect(Filament::getPanel('admin')->getLoginUrl())->with('login_error', $message);
     }
 
     private function storeCalendarConnection($googleUser)
