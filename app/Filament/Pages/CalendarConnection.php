@@ -11,33 +11,41 @@ class CalendarConnection extends Page
 {
     protected string $view = 'filament.pages.calendar-connection';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Settings';
+    public static function getNavigationGroup(): string|\UnitEnum|null
+    {
+        return __('Settings');
+    }
 
     protected static string|\BackedEnum|null $navigationIcon = \Filament\Support\Icons\Heroicon::OutlinedArrowPath;
 
-    protected static ?string $navigationLabel = 'Google Calendar';
+    public static function getNavigationLabel(): string
+    {
+        return __('Google Calendar');
+    }
 
-    protected static ?string $title = 'Google Calendar Connection';
+    public function getTitle(): string|\Illuminate\Contracts\Support\Htmlable
+    {
+        return __('Google Calendar Connection');
+    }
 
     protected static ?int $navigationSort = 5;
 
     public function getSubheading(): ?string
     {
-        return 'Events from the connected Google Calendar (the next 60 days) are copied into Meetings every 2 minutes. '
-            .'Changes and cancellations in Google are picked up automatically.';
+        return __('Events from the connected Google Calendar (the next 60 days) are copied into Meetings every 2 minutes. Changes and cancellations in Google are picked up automatically.');
     }
 
     protected function getHeaderActions(): array
     {
         return [
             Action::make('syncNow')
-                ->label('Sync now')
+                ->label(__('Sync now'))
                 ->action(function () {
                     try {
                         $message = app(GoogleCalendarSync::class)->run();
                         Notification::make()->title($message)->success()->send();
                     } catch (\Throwable $e) {
-                        Notification::make()->title('Sync failed')->body($e->getMessage())->danger()->send();
+                        Notification::make()->title(__('Sync failed'))->body($e->getMessage())->danger()->send();
                     }
                 }),
         ];

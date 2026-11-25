@@ -55,7 +55,7 @@ class AdminUxTest extends TestCase
         $invitation = Invitation::create(['vip_name' => 'Tan Sri A', 'vip_email' => 'a@example.com', 'attendance_status' => 'pending']);
         $contact = $invitation->ensureVipContact();
 
-        $this->get('/rsvp/'.$contact->token)->assertOk()
+        $this->get('/rsvp/'.$contact->token.'?lang=en')->assertOk()
             ->assertSee('Estimated arrival time')
             ->assertSee('Sending a representative');
 

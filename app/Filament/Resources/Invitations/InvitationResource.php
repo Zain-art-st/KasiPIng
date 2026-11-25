@@ -20,9 +20,15 @@ class InvitationResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedStar;
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Big Event RSVP';
+    public static function getNavigationGroup(): string|\UnitEnum|null
+    {
+        return __('Big Event RSVP');
+    }
 
-    protected static ?string $navigationLabel = 'Guest List';
+    public static function getNavigationLabel(): string
+    {
+        return __('Guest List');
+    }
 
     protected static ?int $navigationSort = 1;
 

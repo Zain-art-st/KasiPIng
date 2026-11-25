@@ -44,12 +44,12 @@ class GoogleAuthController extends Controller
             $googleUser = Socialite::driver('google')->user();
         } catch (\Throwable $e) {
             if (session()->pull('google_calendar_connect')) {
-                Notification::make()->title('Google did not finish connecting. Please try again.')->danger()->send();
+                Notification::make()->title(__('Google did not finish connecting. Please try again.'))->danger()->send();
 
                 return redirect(CalendarConnection::getUrl());
             }
 
-            return $this->backToLogin('Google sign-in was cancelled or did not finish. Please try again.');
+            return $this->backToLogin(__('Google sign-in was cancelled or did not finish. Please try again.'));
         }
 
         if (session()->pull('google_calendar_connect')) {
@@ -62,7 +62,7 @@ class GoogleAuthController extends Controller
             ->all();
 
         if (! in_array(strtolower($googleUser->email), $allowed, true)) {
-            return $this->backToLogin('The Google account '.$googleUser->email.' is not authorised to use this system. Sign in with your secretariat account, or ask the administrator to add this one.');
+            return $this->backToLogin(__('The Google account :email is not authorised to use this system. Sign in with your secretariat account, or ask the administrator to add this one.', ['email' => $googleUser->email]));
         }
 
         $user = User::firstOrNew(['email' => $googleUser->email]);
@@ -88,11 +88,11 @@ class GoogleAuthController extends Controller
 
     private function storeCalendarConnection($googleUser)
     {
-        abort_unless(Auth::check(), 403, 'Sign in to the admin panel first.');
+        abort_unless(Auth::check(), 403, __('Sign in to the admin panel first.'));
 
         if (! $googleUser->refreshToken) {
             Notification::make()
-                ->title('Google did not return a refresh token. Please click Connect again.')
+                ->title(__('Google did not return a refresh token. Please click Connect again.'))
                 ->danger()
                 ->send();
 
@@ -108,7 +108,7 @@ class GoogleAuthController extends Controller
             'expires_at' => now()->addSeconds((int) ($googleUser->expiresIn ?? 3600)),
         ]);
 
-        Notification::make()->title('Google Calendar connected')->success()->send();
+        Notification::make()->title(__('Google Calendar connected'))->success()->send();
 
         return redirect(CalendarConnection::getUrl());
     }

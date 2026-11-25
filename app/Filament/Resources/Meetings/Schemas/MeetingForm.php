@@ -17,10 +17,10 @@ class MeetingForm
                     ->required()
                     ->maxLength(255),
                 DateTimePicker::make('starts_at')
-                    ->label('Starts')
+                    ->label(__('Starts'))
                     ->required(),
                 DateTimePicker::make('ends_at')
-                    ->label('Ends'),
+                    ->label(__('Ends')),
                 TextInput::make('location')
                     ->maxLength(255),
                 Textarea::make('description')

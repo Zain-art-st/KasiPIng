@@ -53,13 +53,12 @@ class SeatingPlanPage extends Page
 
     public function getTitle(): string
     {
-        return 'Seating plan: '.$this->eventTitle();
+        return __('Seating plan').': '.$this->eventTitle();
     }
 
     public function getSubheading(): ?string
     {
-        return 'Choose a layout and the number of seats, pick the chair and the tuan rumah, and everyone else is placed by kekananan. '
-            .'Drag a person onto another seat to swap them, or drag names in the running order to change rank.';
+        return __('Choose a layout and the number of seats, pick the chair and the tuan rumah, and everyone else is placed by kekananan. Drag a person onto another seat to swap them, or drag names in the running order to change rank.');
     }
 
     public function eventTitle(): string
@@ -152,7 +151,7 @@ class SeatingPlanPage extends Page
         $planner->arrange();
         $this->commit($planner);
 
-        Notification::make()->title('Guest list refreshed')->success()->send();
+        Notification::make()->title(__('Guest list refreshed'))->success()->send();
     }
 
     public function startOver(): void
@@ -227,18 +226,18 @@ class SeatingPlanPage extends Page
     private function personFields(): array
     {
         return [
-            TextInput::make('name')->label('Name')->required()->maxLength(255),
-            TextInput::make('org')->label('Ministry / organisation')->maxLength(255),
-            TextInput::make('title')->label('Position (jawatan)')->maxLength(255)->live(onBlur: true),
+            TextInput::make('name')->label(__('Name'))->required()->maxLength(255),
+            TextInput::make('org')->label(__('Ministry / organisation'))->maxLength(255),
+            TextInput::make('title')->label(__('Position (jawatan)'))->maxLength(255)->live(onBlur: true),
             Select::make('rank_id')
-                ->label('Kekananan: same level as')
-                ->helperText('Search by position, name or short form (KSU, SUK, JUSA A…). Leave empty to put them last.')
+                ->label(__('Kekananan: same level as'))
+                ->helperText(__('Search by position, name or short form (KSU, SUK, JUSA A…). Leave empty to put them last.'))
                 ->searchable()
                 ->getSearchResultsUsing(fn (string $search) => PrecedenceRank::options($search))
                 ->getOptionLabelUsing(fn ($value) => PrecedenceRank::find($value)?->label())
                 ->live(),
             Toggle::make('remember')
-                ->label('Also add this position to the Kekananan list, right after the chosen entry')
+                ->label(__('Also add this position to the Kekananan list, right after the chosen entry'))
                 ->visible(fn (Get $get) => filled($get('title')) && filled($get('rank_id'))),
         ];
     }
@@ -268,14 +267,14 @@ class SeatingPlanPage extends Page
     public function addPersonAction(): Action
     {
         return Action::make('addPerson')
-            ->label('Add person')
+            ->label(__('Add person'))
             ->icon('heroicon-o-user-plus')
             ->color('gray')
             ->size('sm')
             ->modalHeading(fn (array $arguments) => match ($arguments['role'] ?? null) {
-                'chair' => 'Add the chair (not on the guest list)',
-                'host' => 'Add the tuan rumah (not on the guest list)',
-                default => 'Add someone who is not on the guest list',
+                'chair' => __('Add the chair (not on the guest list)'),
+                'host' => __('Add the tuan rumah (not on the guest list)'),
+                default => __('Add someone who is not on the guest list'),
             })
             ->schema($this->personFields())
             ->action(function (array $data, array $arguments) {
@@ -301,13 +300,13 @@ class SeatingPlanPage extends Page
             ->icon('heroicon-m-arrows-right-left')
             ->size('xs')
             ->color('gray')
-            ->tooltip('Replace with someone else')
-            ->modalHeading(fn (array $arguments) => 'Replace the person in seat '.($arguments['seq'] ?? ''))
-            ->modalDescription('The person now in this seat is marked as not present. The replacement takes this seat and this place in the running order.')
+            ->tooltip(__('Replace with someone else'))
+            ->modalHeading(fn (array $arguments) => __('Replace the person in seat :seat', ['seat' => $arguments['seq'] ?? '']))
+            ->modalDescription(__('The person now in this seat is marked as not present. The replacement takes this seat and this place in the running order.'))
             ->schema([
-                Toggle::make('is_new')->label('Someone not on the list')->live(),
+                Toggle::make('is_new')->label(__('Someone not on the list'))->live(),
                 Select::make('existing')
-                    ->label('Replacement')
+                    ->label(__('Replacement'))
                     ->options(fn () => collect($this->plan['order'])
                         ->reject(fn ($k) => in_array($k, $this->plan['seats'], true))
                         ->mapWithKeys(fn ($k) => [$k => $this->plan['people'][$k]['name'].($this->plan['people'][$k]['title'] ? ' — '.$this->plan['people'][$k]['title'] : '')])
@@ -334,7 +333,7 @@ class SeatingPlanPage extends Page
     public function downloadPdfAction(): Action
     {
         return Action::make('downloadPdf')
-            ->label('Download PDF')
+            ->label(__('Download PDF'))
             ->icon('heroicon-o-printer')
             ->color('gray')
             ->size('sm')

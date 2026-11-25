@@ -18,15 +18,14 @@ class ManagePrecedenceRanks extends ManageRecords
 
     public function getSubheading(): ?string
     {
-        return 'The order of precedence used to rank guests and fill seating plans. Top = most senior. '
-            .'Drag rows to reorder, or export to Excel/CSV, edit, and import it back.';
+        return __('The order of precedence used to rank guests and fill seating plans. Top = most senior. Drag rows to reorder, or export to Excel/CSV, edit, and import it back.');
     }
 
     protected function getHeaderActions(): array
     {
         return [
             CreateAction::make()
-                ->label('Add entry')
+                ->label(__('Add entry'))
                 ->mutateDataUsing(function (array $data) {
                     $after = PrecedenceRank::find($data['after_id'] ?? null);
                     unset($data['after_id']);
@@ -37,7 +36,7 @@ class ManagePrecedenceRanks extends ManageRecords
                 ->after(fn () => PrecedenceRank::renumber()),
 
             Action::make('export')
-                ->label('Export CSV')
+                ->label(__('Export CSV'))
                 ->icon('heroicon-o-arrow-down-tray')
                 ->color('gray')
                 ->action(fn () => response()->streamDownload(
@@ -47,14 +46,13 @@ class ManagePrecedenceRanks extends ManageRecords
                 )),
 
             Action::make('import')
-                ->label('Import CSV')
+                ->label(__('Import CSV'))
                 ->icon('heroicon-o-arrow-up-tray')
                 ->color('gray')
-                ->modalDescription('Replaces the whole list with the file, in the file\'s order (columns: code, title, holder, aliases). '
-                    .'Tip: export first, edit in Excel, then import. Guests keep their ranks when an entry keeps the same Warta number, or the same title and holder.')
+                ->modalDescription(__('Replaces the whole list with the file, in the file\'s order (columns: code, title, holder, aliases). Tip: export first, edit in Excel, then import. Guests keep their ranks when an entry keeps the same Warta number, or the same title and holder.'))
                 ->schema([
                     FileUpload::make('file')
-                        ->label('CSV file')
+                        ->label(__('CSV file'))
                         ->acceptedFileTypes(['text/csv', 'text/plain', 'application/vnd.ms-excel'])
                         ->disk('local')
                         ->directory('precedence-imports')
@@ -65,9 +63,9 @@ class ManagePrecedenceRanks extends ManageRecords
 
                     try {
                         $count = PrecedenceRank::importRows(PrecedenceRank::rowsFromCsv($path));
-                        Notification::make()->title("Imported {$count} entries")->success()->send();
+                        Notification::make()->title(__('Imported :count entries', ['count' => $count]))->success()->send();
                     } catch (\Throwable $e) {
-                        Notification::make()->title('Import failed')->body($e->getMessage())->danger()->send();
+                        Notification::make()->title(__('Import failed'))->body($e->getMessage())->danger()->send();
                     } finally {
                         @unlink($path);
                     }
@@ -81,7 +79,7 @@ class ManagePrecedenceRanks extends ManageRecords
                     ->values()
                     ->all()
             )
-                ->label('Source documents')
+                ->label(__('Source documents'))
                 ->icon('heroicon-o-folder-open')
                 ->color('gray')
                 ->button(),

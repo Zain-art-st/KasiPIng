@@ -24,13 +24,25 @@ class PrecedenceRankResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedListBullet;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Settings';
+    public static function getNavigationGroup(): string|\UnitEnum|null
+    {
+        return __('Settings');
+    }
 
-    protected static ?string $navigationLabel = 'Kekananan List';
+    public static function getNavigationLabel(): string
+    {
+        return __('Kekananan List');
+    }
 
-    protected static ?string $modelLabel = 'kekananan entry';
+    public static function getModelLabel(): string
+    {
+        return __('kekananan entry');
+    }
 
-    protected static ?string $pluralModelLabel = 'Kekananan List';
+    public static function getPluralModelLabel(): string
+    {
+        return __('Kekananan List');
+    }
 
     protected static ?int $navigationSort = 6;
 
@@ -38,26 +50,26 @@ class PrecedenceRankResource extends Resource
     {
         return $schema->components([
             Select::make('after_id')
-                ->label('Place directly after')
-                ->helperText('Where this entry sits in the order of precedence.')
+                ->label(__('Place directly after'))
+                ->helperText(__('Where this entry sits in the order of precedence.'))
                 ->searchable()
                 ->getSearchResultsUsing(fn (string $search) => PrecedenceRank::options($search))
                 ->getOptionLabelUsing(fn ($value) => PrecedenceRank::find($value)?->label())
                 ->visibleOn('create'),
             TextInput::make('code')
-                ->label('Warta number')
-                ->helperText('Only for a category from the Warta (e.g. 38 or 17A). Leave empty for a named position.')
+                ->label(__('Warta number'))
+                ->helperText(__('Only for a category from the Warta (e.g. 38 or 17A). Leave empty for a named position.'))
                 ->maxLength(10),
             TextInput::make('title')
-                ->label('Position / category')
+                ->label(__('Position / category'))
                 ->required()
                 ->maxLength(255),
             TextInput::make('holder')
-                ->label('Current holder')
+                ->label(__('Current holder'))
                 ->maxLength(255),
             TextInput::make('aliases')
-                ->label('Short forms')
-                ->helperText('Comma-separated, used when searching (e.g. KSU, TKSU, SUK Johor).')
+                ->label(__('Short forms'))
+                ->helperText(__('Comma-separated, used when searching (e.g. KSU, TKSU, SUK Johor).'))
                 ->maxLength(255),
         ])->columns(1);
     }
@@ -71,35 +83,35 @@ class PrecedenceRankResource extends Resource
             ->defaultPaginationPageOption(100)
             ->columns([
                 TextColumn::make('rank_no')
-                    ->label('#')
+                    ->label(__('#'))
                     ->state(fn (PrecedenceRank $record) => PrecedenceRank::where('sort', '<=', $record->sort)->count())
                     ->color('gray'),
                 TextColumn::make('code')
-                    ->label('Warta')
+                    ->label(__('Warta'))
                     ->badge()
                     ->placeholder(''),
                 TextColumn::make('title')
-                    ->label('Position / category')
+                    ->label(__('Position / category'))
                     ->weight(fn (PrecedenceRank $record) => $record->isCategory() ? 'bold' : null)
                     ->wrap()
                     ->searchable(),
                 TextColumn::make('holder')
-                    ->label('Current holder')
-                    ->placeholder('—')
+                    ->label(__('Current holder'))
+                    ->placeholder(__('—'))
                     ->wrap()
                     ->searchable(),
                 TextColumn::make('aliases')
-                    ->label('Short forms')
-                    ->placeholder('—')
+                    ->label(__('Short forms'))
+                    ->placeholder(__('—'))
                     ->searchable()
                     ->toggleable(),
             ])
             ->filters([
                 TernaryFilter::make('categories')
-                    ->label('Show')
-                    ->placeholder('Everything')
-                    ->trueLabel('Warta categories only')
-                    ->falseLabel('Named positions only')
+                    ->label(__('Show'))
+                    ->placeholder(__('Everything'))
+                    ->trueLabel(__('Warta categories only'))
+                    ->falseLabel(__('Named positions only'))
                     ->queries(
                         true: fn (Builder $q) => $q->whereNotNull('code'),
                         false: fn (Builder $q) => $q->whereNull('code'),

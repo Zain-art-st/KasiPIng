@@ -14,7 +14,7 @@ class ListInvitations extends ListRecords
     {
         return [
             \Filament\Actions\Action::make('seatingPlan')
-                ->label('Seating plan')
+                ->label(__('Seating plan'))
                 ->icon('heroicon-o-squares-2x2')
                 ->color('gray')
                 ->url(fn () => \App\Filament\Pages\SeatingPlanPage::getUrl()),

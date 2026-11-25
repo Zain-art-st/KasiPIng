@@ -15,13 +15,22 @@ class ReminderSettings extends Page
 {
     protected string $view = 'filament.pages.reminder-settings';
 
-    protected static string|UnitEnum|null $navigationGroup = 'Settings';
+    public static function getNavigationGroup(): string|\UnitEnum|null
+    {
+        return __('Settings');
+    }
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBellAlert;
 
-    protected static ?string $navigationLabel = 'Reminders';
+    public static function getNavigationLabel(): string
+    {
+        return __('Reminders');
+    }
 
-    protected static ?string $title = 'Reminder Emails';
+    public function getTitle(): string|\Illuminate\Contracts\Support\Htmlable
+    {
+        return __('Reminder Emails');
+    }
 
     protected static ?int $navigationSort = 4;
 
@@ -29,7 +38,7 @@ class ReminderSettings extends Page
 
     public function getSubheading(): ?string
     {
-        return 'Keep emailing guests who have not answered, until the meeting starts.';
+        return __('Keep emailing guests who have not answered, until the meeting starts.');
     }
 
     public function mount(): void
@@ -42,9 +51,9 @@ class ReminderSettings extends Page
         return $schema
             ->components([
                 Select::make('interval')
-                    ->label('Send a reminder every')
+                    ->label(__('Send a reminder every'))
                     ->options(collect(AppSetting::REMINDER_INTERVAL_OPTIONS)->mapWithKeys(fn ($h) => [
-                        (string) $h => $h === 0 ? 'Off (no reminders)' : $h.' '.($h === 1 ? 'hour' : 'hours'),
+                        (string) $h => $h === 0 ? __('Off (no reminders)') : trans_choice(':count hour|:count hours', $h),
                     ])->all())
                     ->required()
                     ->selectablePlaceholder(false)
@@ -59,7 +68,7 @@ class ReminderSettings extends Page
         AppSetting::put(AppSetting::REMINDER_INTERVAL_HOURS, $hours);
 
         Notification::make()
-            ->title($hours ? "Reminders every {$hours}h saved" : 'Reminders turned off')
+            ->title($hours ? __('Reminders every :hours h saved', ['hours' => $hours]) : __('Reminders turned off'))
             ->success()
             ->send();
     }

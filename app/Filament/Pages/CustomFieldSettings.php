@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Models\AppSetting;
 use App\Models\CustomFieldDefinition;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Repeater;
@@ -23,21 +24,30 @@ class CustomFieldSettings extends Page
 
     protected string $view = 'filament.pages.custom-field-settings';
 
-    protected static string|UnitEnum|null $navigationGroup = 'Settings';
+    public static function getNavigationGroup(): string|\UnitEnum|null
+    {
+        return __('Settings');
+    }
 
     protected static ?int $navigationSort = 2;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedQuestionMarkCircle;
 
-    protected static ?string $navigationLabel = 'Extra RSVP Questions';
+    public static function getNavigationLabel(): string
+    {
+        return __('Extra RSVP Questions');
+    }
 
-    protected static ?string $title = 'Extra RSVP Questions';
+    public function getTitle(): string|\Illuminate\Contracts\Support\Htmlable
+    {
+        return __('Extra RSVP Questions');
+    }
 
     public ?array $data = [];
 
     public function getSubheading(): ?string
     {
-        return 'Questions you add here are asked on every guest\'s RSVP form, below the standard ones.';
+        return __('Questions you add here are asked on every guest\'s RSVP form, below the standard ones.');
     }
 
     protected function previewCustomFields(): Collection
@@ -45,10 +55,15 @@ class CustomFieldSettings extends Page
         return collect($this->data['fields'] ?? [])
             ->filter(fn ($f) => ($f['enabled'] ?? true) && trim((string) ($f['label'] ?? '')) !== '')
             ->values()
-            ->map(fn ($f, $i) => new CustomFieldDefinition([
-                'field_key' => $f['field_key'] ?? 'preview_'.$i,
-                'label' => $f['label'],
-            ]));
+            ->map(function ($f, $i) {
+                $field = new CustomFieldDefinition([
+                    'field_key' => $f['field_key'] ?? 'preview_'.$i,
+                    'label' => $f['label'],
+                ]);
+                $field->previewLabelMs = $f['label_ms'] ?? '';
+
+                return $field;
+            });
     }
 
     public function mount(): void
@@ -58,6 +73,7 @@ class CustomFieldSettings extends Page
         $this->form->fill([
             'fields' => $fields->map(fn ($f) => [
                 'label' => $f->label,
+                'label_ms' => $f->malayLabel(),
                 'field_key' => $f->field_key,
                 'enabled' => $f->enabled,
             ])->toArray(),
@@ -69,23 +85,29 @@ class CustomFieldSettings extends Page
         return $schema
             ->components([
                 Repeater::make('fields')
-                    ->label('Questions (up to 5)')
+                    ->label(__('Questions (up to 5)'))
                     ->schema([
                         TextInput::make('label')
-                            ->label('Question')
-                            ->placeholder('e.g. Dietary requirements')
+                            ->label(__('Question'))
+                            ->placeholder(__('e.g. Dietary requirements'))
                             ->required()
                             ->maxLength(255)
                             ->live(debounce: 500),
+                        TextInput::make('label_ms')
+                            ->label(__('Question in Bahasa Melayu'))
+                            ->placeholder('cth. Keperluan pemakanan')
+                            ->helperText(__('Shown when the guest views the form in Malay. Leave empty to show the English question.'))
+                            ->maxLength(255)
+                            ->live(debounce: 500),
                         Toggle::make('enabled')
-                            ->label('Ask guests this question')
-                            ->helperText('Turn off to stop asking without deleting answers already given.')
+                            ->label(__('Ask guests this question'))
+                            ->helperText(__('Turn off to stop asking without deleting answers already given.'))
                             ->default(true)
                             ->live(),
                     ])
-                    ->itemLabel(fn (array $state) => $state['label'] ?? 'New question')
+                    ->itemLabel(fn (array $state) => $state['label'] ?? __('New question'))
                     ->maxItems(5)
-                    ->addActionLabel('Add question')
+                    ->addActionLabel(__('Add question'))
                     ->reorderable()
                     ->collapsible()
                     ->live(),
@@ -99,9 +121,14 @@ class CustomFieldSettings extends Page
         $submittedFields = $state['fields'] ?? [];
 
         $existingKeys = [];
+        $malayLabels = [];
 
         foreach ($submittedFields as $index => $field) {
             $existingKeys[] = $key = $this->resolveFieldKey($field);
+
+            if (filled($field['label_ms'] ?? null)) {
+                $malayLabels[$key] = $field['label_ms'];
+            }
 
             CustomFieldDefinition::updateOrCreate(
                 ['field_key' => $key],
@@ -115,9 +142,10 @@ class CustomFieldSettings extends Page
 
      
         CustomFieldDefinition::whereNotIn('field_key', $existingKeys)->delete();
+        AppSetting::putJson(AppSetting::QUESTION_LABELS_MS, $malayLabels);
 
         Notification::make()
-            ->title('Custom questions saved')
+            ->title(__('Custom questions saved'))
             ->success()
             ->send();
 
@@ -138,7 +166,7 @@ class CustomFieldSettings extends Page
     protected function getFormActions(): array
     {
         return [
-            Action::make('save')->label('Save Questions')->action('save'),
+            Action::make('save')->label(__('Save Questions'))->action('save'),
         ];
     }
 }

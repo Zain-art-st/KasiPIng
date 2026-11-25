@@ -70,7 +70,7 @@ class InvitationEmailTest extends TestCase
 
         $mail = new InvitationEmail($contact);
 
-        $mail->assertHasSubject('Independence Day Attendance Confirmation — Dato <Example>');
+        $mail->assertHasSubject('Pengesahan Kehadiran Sambutan Hari Kebangsaan — Dato <Example> / Independence Day Attendance Confirmation — Dato <Example>');
         $mail->assertSeeInHtml($contact->rsvpUrl());
     }
 

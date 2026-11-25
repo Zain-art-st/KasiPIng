@@ -2,7 +2,9 @@
 
 namespace App\Mail;
 
+use App\Models\AppSetting;
 use App\Models\EmailTemplate;
+use App\Models\FormSettings;
 use App\Models\InvitationContact;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
@@ -15,6 +17,7 @@ class InvitationEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
+    // Put a PDF at resources/attachments/invitation.pdf to attach it to every invitation; remove the file to stop.
     public const ATTACHMENT_PATH = 'attachments/invitation.pdf';
 
     public function __construct(
@@ -32,7 +35,7 @@ class InvitationEmail extends Mailable
             cc: $copyContact ? [$this->contact->email] : [],
             replyTo: array_filter([config('mail.reply_to_address')]),
             subject: ($template = $this->template())
-                ? $this->fill($template->subject, escape: false)
+                ? implode(' / ', array_map(fn ($t) => $this->fill($t['subject'], escape: false), $this->templateVersions($template)))
                 : $this->defaultSubject(),
         );
     }
@@ -43,12 +46,13 @@ class InvitationEmail extends Mailable
         $meeting = $invitation->meeting;
 
         if ($template = $this->template()) {
-            $usesLink = str_contains($template->body, '{rsvp_link}') || str_contains($template->body, '%7Brsvp_link%7D');
+            $versions = $this->templateVersions($template);
+            $usesLink = collect($versions)->contains(fn ($t) => str_contains($t['body'], '{rsvp_link}') || str_contains($t['body'], '%7Brsvp_link%7D'));
 
             return new Content(
                 markdown: 'emails.custom-invitation',
                 with: [
-                    'bodyHtml' => $this->fill($template->body, escape: true),
+                    'bodies' => array_map(fn ($t) => $this->fill($t['body'], escape: true), $versions),
                     'rsvpUrl' => $this->contact->rsvpUrl(),
                     'showButton' => ! $usesLink,
                 ],
@@ -63,7 +67,8 @@ class InvitationEmail extends Mailable
                 'contactName' => $this->contact->name,
                 'rsvpUrl' => $this->contact->rsvpUrl(),
                 'meetingTitle' => $meeting?->title,
-                'startsAt' => $meeting?->starts_at->format('D, j M Y · g:i A'),
+                'startsAt' => self::inBothLanguages(fn ($locale) => $meeting?->starts_at->copy()->locale($locale)->translatedFormat('D, j M Y · g:i A')),
+                'heading' => self::inBothLanguages(fn ($locale) => FormSettings::current()->localized($locale)->page_heading),
                 'location' => $meeting?->location,
             ],
         );
@@ -78,6 +83,26 @@ class InvitationEmail extends Mailable
             : [];
     }
 
+    // Emails carry both languages, Malay first. Reorder this list to put English first.
+    public const LANGUAGES = ['ms', 'en'];
+
+    public static function inBothLanguages(\Closure $value): array
+    {
+        return collect(self::LANGUAGES)->mapWithKeys(fn ($locale) => [$locale => $value($locale)])->all();
+    }
+
+    private function templateVersions(EmailTemplate $template): array
+    {
+        $malay = AppSetting::getJson(AppSetting::EMAIL_TEMPLATE_MS);
+        $versions = ['en' => ['subject' => $template->subject, 'body' => $template->body]];
+
+        if (filled($malay['body'] ?? null)) {
+            $versions['ms'] = ['subject' => filled($malay['subject'] ?? null) ? $malay['subject'] : $template->subject, 'body' => $malay['body']];
+        }
+
+        return array_values(array_filter(array_map(fn ($locale) => $versions[$locale] ?? null, self::LANGUAGES)));
+    }
+
     private function template(): ?EmailTemplate
     {
         return EmailTemplate::query()
@@ -90,9 +115,11 @@ class InvitationEmail extends Mailable
     {
         $invitation = $this->contact->invitation;
 
-        return $invitation->meeting
-            ? 'Invitation: '.$invitation->meeting->title.' — please respond'
-            : 'Independence Day Attendance Confirmation — '.$invitation->vip_name;
+        $subject = fn ($locale) => $invitation->meeting
+            ? __('Invitation: :title — please respond', ['title' => $invitation->meeting->title], $locale)
+            : FormSettings::current()->localized($locale)->page_heading.' — '.$invitation->vip_name;
+
+        return implode(' / ', array_unique(self::inBothLanguages($subject)));
     }
 
     private function fill(string $text, bool $escape): string
@@ -106,7 +133,7 @@ class InvitationEmail extends Mailable
             'contact_name' => $this->contact->name,
             'organization' => $invitation->organization,
             'meeting_title' => $meeting?->title,
-            'meeting_time' => $meeting?->starts_at->format('D, j M Y · g:i A'),
+            'meeting_time' => $meeting?->starts_at->translatedFormat('D, j M Y · g:i A'),
             'location' => $meeting?->location,
             'rsvp_link' => $url,
         ];

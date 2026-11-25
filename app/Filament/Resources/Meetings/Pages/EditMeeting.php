@@ -14,7 +14,7 @@ class EditMeeting extends EditRecord
     {
         return [
             \Filament\Actions\Action::make('seatingPlan')
-                ->label('Seating plan')
+                ->label(__('Seating plan'))
                 ->icon('heroicon-o-squares-2x2')
                 ->url(fn () => \App\Filament\Pages\SeatingPlanPage::getUrl(['meeting' => $this->record->getKey()])),
             \App\Filament\Actions\AttendanceSheetAction::make(fn () => new \App\Services\AttendanceSheet(

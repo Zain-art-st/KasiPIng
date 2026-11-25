@@ -20,7 +20,10 @@ class MeetingResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCalendarDays;
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Meetings';
+    public static function getNavigationGroup(): string|\UnitEnum|null
+    {
+        return __('Meetings');
+    }
 
     protected static ?int $navigationSort = 1;
 

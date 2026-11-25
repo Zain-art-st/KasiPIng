@@ -16,6 +16,7 @@ class SeatingLayout
         self::ROUND => 'Round tables (meja bulat)',
     ];
 
+    // Seat box size in pixels on screen and in the PDF; make it larger if long names get cut off.
     public const SEAT_W = 132;
 
     public const SEAT_H = 50;
@@ -31,7 +32,6 @@ class SeatingLayout
         'per_table' => 10,
     ];
 
-    /** Seat numbers from the audience's left to right for one row (INTAN: 4 2 1 3 5 / 3 1 2 4). */
     public static function lineOrder(int $count): array
     {
         $left = [];

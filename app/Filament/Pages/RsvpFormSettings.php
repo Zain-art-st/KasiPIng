@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Pages\Concerns\HasRsvpPreview;
+use App\Models\AppSetting;
 use App\Models\FormSettings;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -11,9 +12,10 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
-use UnitEnum;
 
 class RsvpFormSettings extends Page
 {
@@ -21,91 +23,115 @@ class RsvpFormSettings extends Page
 
     protected string $view = 'filament.pages.rsvp-form-settings';
 
-    protected static string|UnitEnum|null $navigationGroup = 'Settings';
+    public static function getNavigationGroup(): string|\UnitEnum|null
+    {
+        return __('Settings');
+    }
 
     protected static ?int $navigationSort = 1;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
 
-    protected static ?string $navigationLabel = 'RSVP Form Wording';
+    public static function getNavigationLabel(): string
+    {
+        return __('RSVP Form Wording');
+    }
 
-    protected static ?string $title = 'RSVP Form Wording';
+    public function getTitle(): string|\Illuminate\Contracts\Support\Htmlable
+    {
+        return __('RSVP Form Wording');
+    }
 
     public ?array $data = [];
 
     public function getSubheading(): ?string
     {
-        return 'The wording guests see when they open their RSVP link from the invitation email. '
-            .'It applies to every link (big events and meetings). The preview on the right updates as you type.';
+        return __('The wording guests see when they open their RSVP link from the invitation email. It applies to every link (big events and meetings). Fill in both languages; guests can switch between them. The preview on the right updates as you type.');
     }
 
     public function mount(): void
     {
-        $this->form->fill(FormSettings::current()->formState());
+        $settings = FormSettings::current();
+
+        $this->form->fill($settings->formState() + ['ms' => $settings->malayFormState()]);
     }
 
     public function form(Schema $schema): Schema
     {
-        $text = fn (string $name) => TextInput::make($name)->required()->maxLength(255)->live(debounce: 500);
-
         return $schema
             ->components([
-                Section::make('Top of the page')
-                    ->schema([
-                        $text('page_heading')
-                            ->label('Page heading')
-                            ->helperText('Shown at the very top for big-event invitations. Meeting invitations show the meeting title instead.'),
-                        Textarea::make('intro_text')
-                            ->label('Intro text (optional)')
-                            ->rows(2)
-                            ->live(debounce: 500)
-                            ->helperText('A short note under the guest\'s name, e.g. dress code or parking instructions.'),
-                    ]),
-
-                Section::make('Attendance question')
-                    ->schema([
-                        $text('attendance_question')
-                            ->label('Question')
-                            ->helperText('Above the three answer buttons.'),
-                        $text('attending_label')->label('"Attending" button'),
-                        $text('representative_label')
-                            ->label('"Representative" button')
-                            ->helperText('When chosen, the guest is also asked for the representative\'s name and role.'),
-                        $text('not_attending_label')->label('"Not attending" button'),
-                    ]),
-
-                Section::make('Other questions')
-                    ->schema([
-                        $text('vehicle_label')->label('Vehicle question'),
-                        $text('arrival_label')->label('Arrival time question'),
-                        $text('departure_label')->label('Departure time question'),
-                        $text('name_label')
-                            ->label('"Your name" question')
-                            ->helperText('Who is filling in the form. Pre-filled with the PA\'s name; recorded as "Submitted by".'),
-                    ]),
-
-                Section::make('Finishing')
-                    ->schema([
-                        $text('submit_button_label')->label('Submit button'),
-                        $text('thank_you_message')
-                            ->label('Thank-you message')
-                            ->helperText('Shown after the guest submits. Use "After submitting" in the preview to see it.'),
+                Tabs::make(__('Language'))
+                    ->tabs([
+                        Tab::make('English')->schema($this->wordingSections('', required: true)),
+                        Tab::make('Bahasa Melayu')->schema($this->wordingSections('ms.', required: false)),
                     ]),
             ])
             ->statePath('data');
     }
 
+    private function wordingSections(string $prefix, bool $required): array
+    {
+        $text = fn (string $name) => TextInput::make($prefix.$name)->required($required)->maxLength(255)->live(debounce: 500);
+
+        return [
+            Section::make(__('Top of the page'))
+                ->schema([
+                    $text('page_heading')
+                        ->label(__('Page heading'))
+                        ->helperText(__('Shown at the very top for big-event invitations. Meeting invitations show the meeting title instead.')),
+                    Textarea::make($prefix.'intro_text')
+                        ->label(__('Intro text (optional)'))
+                        ->rows(2)
+                        ->live(debounce: 500)
+                        ->helperText(__('A short note under the guest\'s name, e.g. dress code or parking instructions.')),
+                ]),
+
+            Section::make(__('Attendance question'))
+                ->schema([
+                    $text('attendance_question')
+                        ->label(__('Question'))
+                        ->helperText(__('Above the three answer buttons.')),
+                    $text('attending_label')->label(__('"Attending" button')),
+                    $text('representative_label')
+                        ->label(__('"Representative" button'))
+                        ->helperText(__('When chosen, the guest is also asked for the representative\'s name and role.')),
+                    $text('not_attending_label')->label(__('"Not attending" button')),
+                ]),
+
+            Section::make(__('Other questions'))
+                ->schema([
+                    $text('vehicle_label')->label(__('Vehicle question')),
+                    $text('arrival_label')->label(__('Arrival time question')),
+                    $text('departure_label')->label(__('Departure time question')),
+                    $text('name_label')
+                        ->label(__('"Your name" question'))
+                        ->helperText(__('Who is filling in the form. Pre-filled with the PA\'s name; recorded as "Submitted by".')),
+                ]),
+
+            Section::make(__('Finishing'))
+                ->schema([
+                    $text('submit_button_label')->label(__('Submit button')),
+                    $text('thank_you_message')
+                        ->label(__('Thank-you message'))
+                        ->helperText(__('Shown after the guest submits. Use "After submitting" in the preview to see it.')),
+                ]),
+        ];
+    }
+
     protected function previewSettings(): FormSettings
     {
-        $settings = new FormSettings;
-        $settings->fill(array_merge(FormSettings::DEFAULTS, array_filter($this->data ?? [], fn ($v) => $v !== null && $v !== '')));
+        $english = array_intersect_key($this->data ?? [], FormSettings::DEFAULTS);
+        $settings = (new FormSettings)->forceFill(array_merge(FormSettings::DEFAULTS, array_filter($english, fn ($v) => $v !== null && $v !== '')));
 
-        return $settings;
+        return $settings->localized($this->previewLocale(), $this->data['ms'] ?? []);
     }
 
     public function save(): void
     {
         $state = $this->form->getState();
+        $malay = $state['ms'] ?? [];
+        unset($state['ms']);
+
         $settings = FormSettings::query()->first();
 
         if ($settings) {
@@ -114,18 +140,20 @@ class RsvpFormSettings extends Page
             FormSettings::create($state);
         }
 
-        Notification::make()->title('Form wording saved')->success()->send();
+        AppSetting::putJson(AppSetting::FORM_WORDING_MS, array_intersect_key($malay, FormSettings::DEFAULTS_MS));
+
+        Notification::make()->title(__('Form wording saved'))->success()->send();
     }
 
     protected function getHeaderActions(): array
     {
         return [
             Action::make('reset')
-                ->label('Reset to default wording')
+                ->label(__('Reset to default wording'))
                 ->color('gray')
                 ->requiresConfirmation()
-                ->modalDescription('Fills the form with the original wording. Nothing changes for guests until you press Save.')
-                ->action(fn () => $this->form->fill(FormSettings::DEFAULTS)),
+                ->modalDescription(__('Fills the form with the original wording. Nothing changes for guests until you press Save.'))
+                ->action(fn () => $this->form->fill(FormSettings::DEFAULTS + ['ms' => FormSettings::DEFAULTS_MS])),
         ];
     }
 }

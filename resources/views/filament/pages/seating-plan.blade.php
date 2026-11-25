@@ -7,6 +7,7 @@
 
 <x-filament-panels::page>
     <style>
+        /* Seating plan colours: --sp-chair (amber) marks the chair, --sp-host (blue) the tuan rumah, --sp-warn a misplaced seat. */
         .sp { --sp-bg: #f8fafc; --sp-card: #ffffff; --sp-line: #d4d4d8; --sp-muted: #71717a; --sp-text: #18181b;
               --sp-table: #e4e4e7; --sp-chair: #f59e0b; --sp-host: #3b82f6; --sp-warn: #fef3c7; --sp-warn-line: #d97706; --sp-empty: #fafafa; }
         .dark .sp { --sp-bg: #0f0f12; --sp-card: #1c1c21; --sp-line: #3f3f46; --sp-muted: #a1a1aa; --sp-text: #f4f4f5;
@@ -67,30 +68,30 @@
         <x-filament::section>
             <div class="sp-bar">
                 <div class="sp-field">
-                    Seating type
+                    {{ __('Seating type') }}
                     <div class="sp-layouts">
                         @foreach (SeatingLayout::LABELS as $value => $label)
-                            <button type="button" class="sp-layout {{ $state['layout'] === $value ? 'on' : '' }}" wire:click="chooseLayout('{{ $value }}')">{{ $label }}</button>
+                            <button type="button" class="sp-layout {{ $state['layout'] === $value ? 'on' : '' }}" wire:click="chooseLayout('{{ $value }}')">{{ __($label) }}</button>
                         @endforeach
                     </div>
                 </div>
 
                 @if ($state['layout'] === SeatingLayout::LINE)
-                    <label class="sp-field">Seats per row <input type="number" min="1" max="30" wire:model.live.debounce.600ms="plan.config.per_row"></label>
-                    <label class="sp-field">Rows <input type="number" min="1" max="20" wire:model.live.debounce.600ms="plan.config.rows"></label>
+                    <label class="sp-field">{{ __('Seats per row') }} <input type="number" min="1" max="30" wire:model.live.debounce.600ms="plan.config.per_row"></label>
+                    <label class="sp-field">{{ __('Rows') }} <input type="number" min="1" max="20" wire:model.live.debounce.600ms="plan.config.rows"></label>
                 @elseif ($state['layout'] === SeatingLayout::U_SHAPE)
-                    <label class="sp-field">Head table seats <input type="number" min="1" max="15" wire:model.live.debounce.600ms="plan.config.head"></label>
-                    <label class="sp-field">Seats per side <input type="number" min="0" max="30" wire:model.live.debounce.600ms="plan.config.arm"></label>
+                    <label class="sp-field">{{ __('Head table seats') }} <input type="number" min="1" max="15" wire:model.live.debounce.600ms="plan.config.head"></label>
+                    <label class="sp-field">{{ __('Seats per side') }} <input type="number" min="0" max="30" wire:model.live.debounce.600ms="plan.config.arm"></label>
                 @elseif ($state['layout'] === SeatingLayout::ROUND)
-                    <label class="sp-field">Tables <input type="number" min="1" max="40" wire:model.live.debounce.600ms="plan.config.tables"></label>
-                    <label class="sp-field">Seats per table <input type="number" min="2" max="16" wire:model.live.debounce.600ms="plan.config.per_table"></label>
+                    <label class="sp-field">{{ __('Tables') }} <input type="number" min="1" max="40" wire:model.live.debounce.600ms="plan.config.tables"></label>
+                    <label class="sp-field">{{ __('Seats per table') }} <input type="number" min="2" max="16" wire:model.live.debounce.600ms="plan.config.per_table"></label>
                 @endif
 
                 @if ($state['layout'])
                     <div class="sp-field">
-                        {{ $seatCount }} seats for {{ $needed }} {{ $needed === 1 ? 'person' : 'people' }}
+                        {{ trans_choice(':seats seats for :count person|:seats seats for :count people', $needed, ['seats' => $seatCount]) }}
                         @if ($seatCount !== $needed)
-                            <button type="button" class="sp-link" wire:click="fitSeats">Fit seats to people</button>
+                            <button type="button" class="sp-link" wire:click="fitSeats">{{ __('Fit seats to people') }}</button>
                         @endif
                     </div>
                 @endif
@@ -98,33 +99,33 @@
 
             <div class="sp-bar" style="margin-top: 1rem;">
                 <label class="sp-field">
-                    Chair (Pengerusi / tetamu kehormat) · seat 1
+                    {{ __('Chair (Pengerusi / tetamu kehormat) · seat 1') }}
                     <select class="wide" wire:model.live="plan.chair">
-                        <option value="">— Highest rank present —</option>
+                        <option value="">{{ __('— Highest rank present —') }}</option>
                         @foreach ($state['order'] as $key)
-                            <option value="{{ $key }}" wire:key="chair-{{ $key }}">{{ $labelFor($key) }}{{ $people[$key]['present'] ? '' : ' (not attending)' }}</option>
+                            <option value="{{ $key }}" wire:key="chair-{{ $key }}">{{ $labelFor($key) }}{{ $people[$key]['present'] ? '' : ' ('.__('not attending').')' }}</option>
                         @endforeach
                     </select>
-                    <button type="button" class="sp-link" x-on:click="$wire.mountAction('addPerson', { role: 'chair' })">+ Someone not on the list</button>
+                    <button type="button" class="sp-link" x-on:click="$wire.mountAction('addPerson', { role: 'chair' })">{{ __('+ Someone not on the list') }}</button>
                 </label>
                 <label class="sp-field">
-                    Tuan rumah (host) · seat 2
+                    {{ __('Tuan rumah (host) · seat 2') }}
                     <select class="wide" wire:model.live="plan.host">
-                        <option value="">— None —</option>
+                        <option value="">{{ __('— None —') }}</option>
                         @foreach ($state['order'] as $key)
-                            <option value="{{ $key }}" wire:key="host-{{ $key }}">{{ $labelFor($key) }}{{ $people[$key]['present'] ? '' : ' (not attending)' }}</option>
+                            <option value="{{ $key }}" wire:key="host-{{ $key }}">{{ $labelFor($key) }}{{ $people[$key]['present'] ? '' : ' ('.__('not attending').')' }}</option>
                         @endforeach
                     </select>
-                    <button type="button" class="sp-link" x-on:click="$wire.mountAction('addPerson', { role: 'host' })">+ Someone not on the list</button>
+                    <button type="button" class="sp-link" x-on:click="$wire.mountAction('addPerson', { role: 'host' })">{{ __('+ Someone not on the list') }}</button>
                 </label>
 
                 <div style="display:flex; gap:.5rem; flex-wrap:wrap; margin-left:auto;">
                     {{ $this->addPersonAction }}
-                    <x-filament::button size="sm" color="gray" icon="heroicon-o-bars-arrow-down" wire:click="resortByRank">Re-sort by rank</x-filament::button>
-                    <x-filament::button size="sm" color="gray" icon="heroicon-o-arrow-path" wire:click="refreshGuests">Refresh guest list</x-filament::button>
+                    <x-filament::button size="sm" color="gray" icon="heroicon-o-bars-arrow-down" wire:click="resortByRank">{{ __('Re-sort by rank') }}</x-filament::button>
+                    <x-filament::button size="sm" color="gray" icon="heroicon-o-arrow-path" wire:click="refreshGuests">{{ __('Refresh guest list') }}</x-filament::button>
                     {{ $this->downloadPdfAction }}
                     @if ($state['layout'])
-                        <x-filament::button size="sm" color="gray" icon="heroicon-o-x-mark" wire:click="startOver" wire:confirm="Clear the layout and all seats?">Start over</x-filament::button>
+                        <x-filament::button size="sm" color="gray" icon="heroicon-o-x-mark" wire:click="startOver" wire:confirm="{{ __('Clear the layout and all seats?') }}">{{ __('Start over') }}</x-filament::button>
                     @endif
                 </div>
             </div>
@@ -134,11 +135,9 @@
             <div>
                 @if (! $layout)
                     <div class="sp-empty-state">
-                        <p style="font-weight:600; font-size:1rem;">Choose a seating type to start</p>
+                        <p style="font-weight:600; font-size:1rem;">{{ __('Choose a seating type to start') }}</p>
                         <p style="color:var(--sp-muted); margin-top:.35rem;">
-                            {{ count(array_filter($people, fn ($p) => $p['present'])) }} attending ·
-                            {{ count(array_filter($people, fn ($p) => ! $p['present'])) }} invited but not confirmed.
-                            Seats are filled by kekananan once you pick a layout.
+                            {{ __(':attending attending · :other invited but not confirmed. Seats are filled by kekananan once you pick a layout.', ['attending' => count(array_filter($people, fn ($p) => $p['present'])), 'other' => count(array_filter($people, fn ($p) => ! $p['present']))]) }}
                         </p>
                     </div>
                 @else
@@ -167,7 +166,7 @@
                                      @if ($p) draggable="true" x-on:dragstart="drag = { kind: 'seat', value: '{{ $seq }}' }" @endif
                                      x-on:dragover.prevent
                                      x-on:drop.prevent="drag && $wire.dropOnSeat({{ $seq }}, drag.kind, drag.value); drag = null"
-                                     @if ($p) title="{{ $p['name'] }}{{ $p['title'] ? ' — '.$p['title'] : '' }}{{ $p['org'] ? ' · '.$p['org'] : '' }}{{ in_array($seq, $misplaced, true) ? ' ⚠ Someone more senior sits further from the chair' : '' }}" @endif>
+                                     @if ($p) title="{{ $p['name'] }}{{ $p['title'] ? ' — '.$p['title'] : '' }}{{ $p['org'] ? ' · '.$p['org'] : '' }}{{ in_array($seq, $misplaced, true) ? ' ⚠ '.__('Someone more senior sits further from the chair') : '' }}" @endif>
                                     <span class="no">{{ $seq }}</span>
                                     @if ($p)
                                         <div class="nm">
@@ -178,28 +177,28 @@
                                         <div class="sub">{{ $p['note'] ?: ($p['title'] ?: $p['org']) }}</div>
                                         <div class="tools">
                                             {{ ($this->replaceAction)(['seq' => $seq]) }}
-                                            <x-filament::icon-button icon="heroicon-m-user-minus" size="xs" color="gray" tooltip="Not present" wire:click="setPresent('{{ $key }}', false)" />
+                                            <x-filament::icon-button icon="heroicon-m-user-minus" size="xs" color="gray" :tooltip="__('Not present')" wire:click="setPresent('{{ $key }}', false)" />
                                         </div>
                                     @else
-                                        <div class="sub" style="margin-top:.6rem;">Empty</div>
+                                        <div class="sub" style="margin-top:.6rem;">{{ __('Empty') }}</div>
                                     @endif
                                 </div>
                             @endforeach
                         </div>
                     </div>
                     <div class="sp-legend">
-                        <span class="l-chair">Chair</span>
-                        <span class="l-host">Tuan rumah</span>
-                        <span class="l-warn">Someone more senior sits further from the chair</span>
-                        <span>Seat numbers follow protocol order (1 = most senior).</span>
+                        <span class="l-chair">{{ __('Chair') }}</span>
+                        <span class="l-host">{{ __('Tuan rumah') }}</span>
+                        <span class="l-warn">{{ __('Someone more senior sits further from the chair') }}</span>
+                        <span>{{ __('Seat numbers follow protocol order (1 = most senior).') }}</span>
                     </div>
                 @endif
             </div>
 
             <aside>
                 <div class="sp-panel">
-                    <h3>Running order (kekananan)</h3>
-                    <p class="hint">Most senior first. Drag a name onto another to put it just above; seats re-fill to match.</p>
+                    <h3>{{ __('Running order (kekananan)') }}</h3>
+                    <p class="hint">{{ __('Most senior first. Drag a name onto another to put it just above; seats re-fill to match.') }}</p>
                     @foreach ($state['order'] as $key)
                         @php $p = $people[$key]; @endphp
                         <div wire:key="order-{{ $key }}" class="sp-item {{ $p['present'] ? '' : 'out' }}"
@@ -211,36 +210,36 @@
                             <div class="who">
                                 <div>{{ $p['name'] }}</div>
                                 <div class="sub">
-                                    @if ($p['rank_sort'] >= \App\Services\Seating\SeatingPlanner::UNRANKED)<span class="sp-norank">NO RANK</span>@endif
+                                    @if ($p['rank_sort'] >= \App\Services\Seating\SeatingPlanner::UNRANKED)<span class="sp-norank">{{ __('NO RANK') }}</span>@endif
                                     {{ $p['note'] ?: ($p['title'] ?: $p['org']) }}
                                 </div>
                             </div>
                             @if ($p['present'])
-                                <button type="button" class="sp-mini" wire:click="setPresent(@js($key), false)" title="Mark as not present">Absent</button>
+                                <button type="button" class="sp-mini" wire:click="setPresent(@js($key), false)" title="{{ __('Mark as not present') }}">{{ __('Absent') }}</button>
                             @else
-                                <button type="button" class="sp-mini" wire:click="setPresent(@js($key), true)" title="Mark as present">Present</button>
+                                <button type="button" class="sp-mini" wire:click="setPresent(@js($key), true)" title="{{ __('Mark as present') }}">{{ __('Present') }}</button>
                             @endif
                             @if (str_starts_with($key, 'm:'))
-                                <button type="button" class="sp-mini" style="color:var(--sp-muted)" wire:click="removeManual(@js($key))" title="Remove">✕</button>
+                                <button type="button" class="sp-mini" style="color:var(--sp-muted)" wire:click="removeManual(@js($key))" title="{{ __('Remove') }}">✕</button>
                             @endif
                         </div>
                     @endforeach
                     <div class="sp-drop" style="margin-top:.4rem; text-align:center; color:var(--sp-muted); font-size:.7rem;"
                          x-on:dragover.prevent
-                         x-on:drop.prevent="drag && $wire.reorder(drag.kind, drag.value, null); drag = null">Drop here to move to the end</div>
+                         x-on:drop.prevent="drag && $wire.reorder(drag.kind, drag.value, null); drag = null">{{ __('Drop here to move to the end') }}</div>
                 </div>
 
                 @if ($layout)
                     <div class="sp-panel">
-                        <h3>Present but no seat ({{ count($unseated) }})</h3>
-                        <p class="hint">Drag a seat here to empty it; drag a name onto a seat to seat them.</p>
+                        <h3>{{ __('Present but no seat (:count)', ['count' => count($unseated)]) }}</h3>
+                        <p class="hint">{{ __('Drag a seat here to empty it; drag a name onto a seat to seat them.') }}</p>
                         <div class="sp-drop" x-on:dragover.prevent x-on:drop.prevent="drag && $wire.dropOnTray(drag.kind, drag.value); drag = null">
                             @forelse ($unseated as $key)
                                 <div wire:key="tray-{{ $key }}" class="sp-item" draggable="true" x-on:dragstart="drag = { kind: 'person', value: @js($key) }">
                                     <div class="who"><div>{{ $people[$key]['name'] }}</div><div class="sub">{{ $people[$key]['title'] ?: $people[$key]['org'] }}</div></div>
                                 </div>
                             @empty
-                                <span style="color:var(--sp-muted); font-size:.72rem;">Everyone present has a seat.</span>
+                                <span style="color:var(--sp-muted); font-size:.72rem;">{{ __('Everyone present has a seat.') }}</span>
                             @endforelse
                         </div>
                     </div>

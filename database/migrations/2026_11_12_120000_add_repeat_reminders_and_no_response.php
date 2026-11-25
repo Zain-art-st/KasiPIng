@@ -19,7 +19,6 @@ return new class extends Migration
             $table->timestamp('no_response_at')->nullable()->after('invited_at');
         });
 
-        // Add the new unique key before dropping the old one: MySQL's foreign key needs one at all times.
         Schema::table('reminder_logs', function (Blueprint $table) {
             $table->timestamp('due_at')->nullable()->after('invitation_id');
             $table->unique(['invitation_id', 'due_at']);

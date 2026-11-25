@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="utf-8">
     <title>{{ $title }}</title>
@@ -10,6 +10,7 @@
         .subtitle { text-align: center; color: #444; margin: 0 0 6mm; }
         table { width: 100%; border-collapse: collapse; margin-bottom: 6mm; page-break-inside: avoid; }
         th, td { border: 1px solid #000; padding: 2mm 2.5mm; text-align: left; vertical-align: middle; }
+        /* Grey band above each ministry; change the colour here. Column widths are set just below. */
         .org { background: #e5e7eb; font-weight: bold; font-size: 10.5pt; }
         thead th { font-weight: bold; }
         td { height: 9mm; }
@@ -30,10 +31,10 @@
             <thead>
                 <tr><th colspan="4" class="org">{{ $group['organization'] }}</th></tr>
                 <tr>
-                    <th class="no">No.</th>
-                    <th class="name">Name</th>
-                    <th class="phone">Phone number</th>
-                    <th class="sign">Signature</th>
+                    <th class="no">{{ __('No.') }}</th>
+                    <th class="name">{{ __('Name') }}</th>
+                    <th class="phone">{{ __('Phone number') }}</th>
+                    <th class="sign">{{ __('Signature') }}</th>
                 </tr>
             </thead>
             <tbody>

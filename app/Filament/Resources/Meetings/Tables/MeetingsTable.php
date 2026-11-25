@@ -26,17 +26,17 @@ class MeetingsTable
                     TextColumn::make('cancelled_at')
                         ->badge()
                         ->color('danger')
-                        ->formatStateUsing(fn () => 'Cancelled'),
+                        ->formatStateUsing(fn () => __('Cancelled')),
                     TextColumn::make('starts_at')
-                        ->dateTime('D, j M Y · g:i A')
+                        ->formatStateUsing(fn ($state) => $state?->translatedFormat('D, j M Y · g:i A'))
                         ->sortable()
                         ->color('gray'),
                     TextColumn::make('location')
-                        ->placeholder('No location set')
+                        ->placeholder(__('No location set'))
                         ->color('gray'),
                     TextColumn::make('responded_count')
                         ->badge()
-                        ->formatStateUsing(fn ($state, $record) => "{$state} of {$record->invitations_count} responded"),
+                        ->formatStateUsing(fn ($state, $record) => __(':responded of :total responded', ['responded' => $state, 'total' => $record->invitations_count])),
                 ]),
             ])
             ->contentGrid([
@@ -46,10 +46,10 @@ class MeetingsTable
             ->defaultSort('starts_at')
             ->filters([
                 Filter::make('upcoming')
-                    ->label('Upcoming only')
+                    ->label(__('Upcoming only'))
                     ->query(fn (Builder $query) => $query->where('starts_at', '>=', now()->startOfDay())),
                 Filter::make('hide_cancelled')
-                    ->label('Hide cancelled')
+                    ->label(__('Hide cancelled'))
                     ->query(fn (Builder $query) => $query->whereNull('cancelled_at')),
             ]);
     }

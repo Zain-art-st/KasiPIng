@@ -15,7 +15,10 @@ class InvitationsRelationManager extends RelationManager
 {
     protected static string $relationship = 'invitations';
 
-    protected static ?string $title = 'Attendees';
+    public static function getTitle(\Illuminate\Database\Eloquent\Model $ownerRecord, string $pageClass): string
+    {
+        return __('Attendees');
+    }
 
     public function form(Schema $schema): Schema
     {
@@ -28,7 +31,7 @@ class InvitationsRelationManager extends RelationManager
             ->headerActions([
             InvitationsTable::sendNotInvitedAction(fn () => $this->getOwnerRecord()->invitations()),
             Action::make('importCsv')
-            ->label('Import CSV')
+            ->label(__('Import CSV'))
             ->icon('heroicon-o-arrow-up-tray')
             ->url(fn () => ImportInvitations::getUrl(['meeting' => $this->getOwnerRecord()->getKey()])),
             CreateAction::make()

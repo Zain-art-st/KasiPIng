@@ -22,38 +22,33 @@ class InvitationForm
         return $schema
             ->components([
                 TextInput::make('vip_name')
-                    ->label('VIP name')
+                    ->label(__('VIP name'))
                     ->required(),
                 TextInput::make('organization')
-                    ->label('Ministry / organisation'),
+                    ->label(__('Ministry / organisation')),
                 TextInput::make('position_title')
-                    ->label('Position (jawatan)')
-                    ->placeholder('e.g. Ketua Setiausaha'),
+                    ->label(__('Position (jawatan)'))
+                    ->placeholder(__('e.g. Ketua Setiausaha')),
                 Select::make('precedence_rank_id')
-                    ->label('Kekananan (rank)')
-                    ->helperText('Used to place them in seating plans. Search by position, name or short form (KSU, SUK, JUSA A…).')
+                    ->label(__('Kekananan (rank)'))
+                    ->helperText(__('Used to place them in seating plans. Search by position, name or short form (KSU, SUK, JUSA A…).'))
                     ->searchable()
                     ->getSearchResultsUsing(fn (string $search) => PrecedenceRank::options($search))
                     ->getOptionLabelUsing(fn ($value) => PrecedenceRank::find($value)?->label()),
                 TextInput::make('vip_email')
                     ->email()
-                    ->label('VIP Email')
-                    ->helperText('The invitation is addressed here. If there is no PA, the VIP gets their own RSVP link.'),
+                    ->label(__('VIP Email'))
+                    ->helperText(__('The invitation is addressed here. If there is no PA, the VIP gets their own RSVP link.')),
                 TextInput::make('vip_phone')
-                    ->label('VIP Phone'),
+                    ->label(__('VIP Phone')),
                 Select::make('attendance_status')
-                    ->options([
-                        'pending' => 'Pending',
-                        'attending' => 'Attending',
-                        'representative_attending' => 'Representative Attending',
-                        'not_attending' => 'Not Attending',
-                    ])
+                    ->options(fn () => Invitation::statusOptions())
                     ->required()
                     ->default('pending'),
                 TextInput::make('representative_name')
-                    ->label('Representative Name'),
+                    ->label(__('Representative Name')),
                 TextInput::make('representative_role')
-                    ->label('Representative Role/Title'),
+                    ->label(__('Representative Role/Title')),
                 TextInput::make('vehicle_registration')
                     ->label($labels->vehicle_label),
                 TextInput::make('estimated_arrival')
@@ -68,8 +63,8 @@ class InvitationForm
                 DateTimePicker::make('submitted_at')
                     ->disabled(),
                 DateTimePicker::make('expires_at')
-                    ->label('Link expires at')
-                    ->helperText('Optional. After this time the RSVP link stops working.'),
+                    ->label(__('Link expires at'))
+                    ->helperText(__('Optional. After this time the RSVP link stops working.')),
                 static::customAnswers(),
             ]);
     }
@@ -78,10 +73,10 @@ class InvitationForm
     {
         $fields = CustomFieldDefinition::orderBy('sort_order')->get();
 
-        return Section::make('Answers to extra questions')
-            ->description('Filled in by the guest on their RSVP form, or from a CSV import.')
+        return Section::make(__('Answers to extra questions'))
+            ->description(__('Filled in by the guest on their RSVP form, or from a CSV import.'))
             ->schema($fields->map(fn (CustomFieldDefinition $field) => Placeholder::make('answer_'.$field->field_key)
-                ->label($field->label)
+                ->label($field->localizedLabel())
                 ->content(fn (?Invitation $record) => $record?->customFieldValues()
                     ->where('field_key', $field->field_key)
                     ->value('value') ?: '—'))

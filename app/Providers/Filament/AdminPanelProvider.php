@@ -19,6 +19,9 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use App\Filament\Auth\GoogleLogin;
+use App\Http\Middleware\SetLocale;
+use Filament\Actions\Action;
+use Filament\Navigation\NavigationGroup;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -29,13 +32,22 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login(GoogleLogin::class)
+            // Name shown top-left of the admin panel; it comes from APP_NAME in .env.
+            ->brandName(fn () => config('app.name'))
+            // Admin panel colour: swap Color::Amber for another, e.g. Color::Blue, Color::Emerald or Color::Indigo.
             ->colors([
                 'primary' => Color::Amber,
             ])
             ->navigationGroups([
-                'Meetings',
-                'Big Event RSVP',
-                'Settings',
+                NavigationGroup::make('meetings')->label(fn () => __('Meetings')),
+                NavigationGroup::make('big-event')->label(fn () => __('Big Event RSVP')),
+                NavigationGroup::make('settings')->label(fn () => __('Settings')),
+            ])
+            ->userMenuItems([
+                Action::make('switchLanguage')
+                    ->label(fn () => SetLocale::LOCALES[SetLocale::other()])
+                    ->icon('heroicon-o-language')
+                    ->url(fn () => route('language.switch', SetLocale::other())),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
@@ -54,6 +66,7 @@ class AdminPanelProvider extends PanelProvider
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
                 StartSession::class,
+                SetLocale::class,
                 AuthenticateSession::class,
                 ShareErrorsFromSession::class,
                 PreventRequestForgery::class,

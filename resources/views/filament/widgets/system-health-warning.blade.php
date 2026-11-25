@@ -8,7 +8,7 @@
 
                 @if ($problem['url'])
                     <p class="mt-2 text-sm">
-                        <x-filament::link :href="$problem['url']">Open Calendar Connection</x-filament::link>
+                        <x-filament::link :href="$problem['url']">{{ __('Open Calendar Connection') }}</x-filament::link>
                     </p>
                 @endif
             </x-filament::section>

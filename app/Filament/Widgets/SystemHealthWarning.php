@@ -31,9 +31,9 @@ class SystemHealthWarning extends Widget
 
         if (! $lastRun || Carbon::parse($lastRun)->lt(now()->subMinutes(10))) {
             $problems[] = [
-                'title' => 'Scheduler is not running',
-                'message' => ($lastRun ? 'Last run '.Carbon::parse($lastRun)->diffForHumans().'. ' : 'It has never run here. ')
-                    .'Reminders and calendar sync are paused. On Laravel Cloud, enable the Scheduler toggle on the App cluster and redeploy.',
+                'title' => __('Scheduler is not running'),
+                'message' => ($lastRun ? __('Last run :time.', ['time' => Carbon::parse($lastRun)->diffForHumans()]).' ' : __('It has never run here.').' ')
+                    .__('Reminders and calendar sync are paused. On Laravel Cloud, enable the Scheduler toggle on the App cluster and redeploy.'),
                 'url' => null,
             ];
         }
@@ -42,7 +42,7 @@ class SystemHealthWarning extends Widget
 
         if ($connection?->last_error) {
             $problems[] = [
-                'title' => 'Google Calendar sync is failing',
+                'title' => __('Google Calendar sync is failing'),
                 'message' => $connection->last_error,
                 'url' => CalendarConnection::getUrl(),
             ];

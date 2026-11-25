@@ -20,6 +20,7 @@
         .circle { position: absolute; border-radius: 50%; background: #e5e7eb; text-align: center; color: #555; font-weight: bold; }
         .label { position: absolute; color: #666; text-transform: uppercase; letter-spacing: 1px; }
         .seat { position: absolute; box-sizing: border-box; border: 1px solid #555; background: #fff; overflow: hidden; }
+        /* PDF colours: grey tables (#e5e7eb) and the brown border marking the chair. */
         .seat.chair { border: 2px solid #b45309; }
         .seat.host { border: 2px solid #1d4ed8; }
         .seat .no { position: absolute; left: 2px; top: 1px; font-weight: bold; color: #555; }
@@ -33,7 +34,7 @@
 </head>
 <body>
     <h1>{{ $title }}</h1>
-    <p class="sub">Susunan tempat duduk · {{ SeatingLayout::LABELS[$state['layout']] ?? '' }} · {{ now()->format('j M Y, g:i A') }}</p>
+    <p class="sub">Susunan tempat duduk · {{ __(SeatingLayout::LABELS[$state['layout']] ?? '', [], 'ms') }} · {{ now()->format('j M Y, g:i A') }}</p>
 
     <div class="canvas" style="width: {{ $px($layout['width']) }}; height: {{ $px($layout['height']) }};">
         @foreach ($layout['shapes'] as $shape)

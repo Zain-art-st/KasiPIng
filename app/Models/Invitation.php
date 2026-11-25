@@ -55,15 +55,25 @@ class Invitation extends Model
     public function statusLabel(): string
     {
         if ($this->attendance_status === 'not_attending' && $this->no_response_at) {
-            return 'No response';
+            return __('No response');
         }
 
         return match ($this->attendance_status) {
-            'attending' => 'Attending',
-            'representative_attending' => 'Representative',
-            'not_attending' => 'Not attending',
-            default => 'Pending',
+            'attending' => __('Attending'),
+            'representative_attending' => __('Representative'),
+            'not_attending' => __('Not attending'),
+            default => __('Pending'),
         };
+    }
+
+    public static function statusOptions(): array
+    {
+        return [
+            'pending' => __('Pending'),
+            'attending' => __('Attending'),
+            'representative_attending' => __('Representative Attending'),
+            'not_attending' => __('Not Attending'),
+        ];
     }
 
     public function contacts(): HasMany
@@ -125,14 +135,14 @@ class Invitation extends Model
             : collect();
 
         if ($contacts->isEmpty()) {
-            return $this->vip_email ? 'To: '.$this->vip_email : 'No email address on this invitation.';
+            return $this->vip_email ? __('To').': '.$this->vip_email : __('No email address on this invitation.');
         }
 
         return $contacts->map(function (InvitationContact $c) {
             $to = $this->vip_email ?: $c->email;
             $cc = $this->vip_email && strcasecmp($this->vip_email, $c->email) !== 0 ? ' · CC: '.$c->email : '';
 
-            return 'To: '.$to.$cc;
+            return __('To').': '.$to.$cc;
         })->implode("\n");
     }
 

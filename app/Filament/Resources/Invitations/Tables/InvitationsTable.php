@@ -33,10 +33,10 @@ class InvitationsTable
                 TextColumn::make('organization')
                     ->searchable(),
                 TextColumn::make('vip_email')
-                    ->label('VIP Email')
+                    ->label(__('VIP Email'))
                     ->searchable(),
                 TextColumn::make('attendance_status')
-                    ->label('Status')
+                    ->label(__('Status'))
                     ->badge()
                     ->formatStateUsing(fn ($state, Invitation $record) => $record->statusLabel())
                     ->color(fn (Invitation $record) => match (true) {
@@ -47,19 +47,19 @@ class InvitationsTable
                         default => 'warning',
                     })
                     ->tooltip(fn (Invitation $record) => $record->no_response_at
-                        ? 'Never answered; counted as not attending since '.$record->no_response_at->format('j M, g:i A')
+                        ? __('Never answered; counted as not attending since :time', ['time' => $record->no_response_at->translatedFormat('j M, g:i A')])
                         : null),
                 TextColumn::make('invited_at')
-                    ->label('Invited')
+                    ->label(__('Invited'))
                     ->since()
-                    ->placeholder('Not sent')
+                    ->placeholder(__('Not sent'))
                     ->sortable(),
                 TextColumn::make('representative_name')
-                    ->label('Representative')
-                    ->placeholder('—')
+                    ->label(__('Representative'))
+                    ->placeholder(__('—'))
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('submitted_by_email')
-                    ->label('Submitted By')
+                    ->label(__('Submitted By'))
                     ->searchable()
                     ->toggleable(),
                 ...static::customFieldColumns(),
@@ -74,14 +74,9 @@ class InvitationsTable
             ])
             ->filters([
                 SelectFilter::make('attendance_status')
-                    ->options([
-                        'pending' => 'Pending',
-                        'attending' => 'Attending',
-                        'representative_attending' => 'Representative Attending',
-                        'not_attending' => 'Not Attending',
-                    ]),
+                    ->options(fn () => Invitation::statusOptions()),
                 TernaryFilter::make('invited')
-                    ->label('Invitation sent')
+                    ->label(__('Invitation sent'))
                     ->nullable()
                     ->attribute('invited_at'),
             ])
@@ -95,10 +90,10 @@ class InvitationsTable
             ->toolbarActions([
                 BulkActionGroup::make([
                     BulkAction::make('sendBulkInvitations')
-                        ->label('Send / resend to selected')
+                        ->label(__('Send / resend to selected'))
                         ->icon('heroicon-o-envelope')
                         ->requiresConfirmation()
-                        ->modalDescription('Sends the invitation email to each selected guest (PA copied), including guests who were already invited.')
+                        ->modalDescription(__('Sends the invitation email to each selected guest (PA copied), including guests who were already invited.'))
                         ->action(fn ($records) => static::sendMany($records)),
                     DeleteBulkAction::make(),
                 ]),
@@ -108,14 +103,16 @@ class InvitationsTable
     public static function sendOneAction(): Action
     {
         return Action::make('send')
-            ->label(fn (Invitation $record) => $record->invited_at ? 'Resend' : 'Send')
+            ->label(fn (Invitation $record) => $record->invited_at ? __('Resend') : __('Send'))
             ->icon('heroicon-o-paper-airplane')
             ->color(fn (Invitation $record) => $record->invited_at ? 'gray' : 'primary')
             ->requiresConfirmation()
-            ->modalHeading(fn (Invitation $record) => ($record->invited_at ? 'Resend invitation to ' : 'Send invitation to ').$record->vip_name)
+            ->modalHeading(fn (Invitation $record) => $record->invited_at
+                ? __('Resend invitation to :name', ['name' => $record->vip_name])
+                : __('Send invitation to :name', ['name' => $record->vip_name]))
             ->modalDescription(fn (Invitation $record) => $record->recipientSummary()
-                .($record->invited_at ? "\nLast sent ".$record->invited_at->diffForHumans().'.' : ''))
-            ->modalSubmitActionLabel('Send')
+                .($record->invited_at ? "\n".__('Last sent :time.', ['time' => $record->invited_at->diffForHumans()]) : ''))
+            ->modalSubmitActionLabel(__('Send'))
             ->action(fn (Invitation $record) => static::sendMany([$record]));
     }
 
@@ -124,11 +121,11 @@ class InvitationsTable
         $notInvited = fn () => $query()->whereNull('invited_at');
 
         return Action::make('sendNotInvited')
-            ->label(fn () => 'Send to everyone not yet invited ('.$notInvited()->count().')')
+            ->label(fn () => __('Send to everyone not yet invited (:count)', ['count' => $notInvited()->count()]))
             ->icon('heroicon-o-paper-airplane')
             ->requiresConfirmation()
-            ->modalDescription('Emails every guest on this list who has not been sent an invitation yet. Guests already invited are skipped; use their "Resend" button for those.')
-            ->modalSubmitActionLabel('Send')
+            ->modalDescription(__('Emails every guest on this list who has not been sent an invitation yet. Guests already invited are skipped; use their "Resend" button for those.'))
+            ->modalSubmitActionLabel(__('Send'))
             ->disabled(fn () => ! $notInvited()->exists())
             ->action(fn () => static::sendMany($notInvited()->with('contacts')->get()));
     }
@@ -154,15 +151,15 @@ class InvitationsTable
             }
         }
 
-        $notification = Notification::make()->title("{$sent} invitation email(s) sent");
+        $notification = Notification::make()->title(__(':count invitation email(s) sent', ['count' => $sent]));
         $problems = [];
 
         if ($failed) {
-            $problems[] = 'Could not send to: '.implode(', ', $failed).'. Check the mail settings and try again.';
+            $problems[] = __('Could not send to: :names. Check the mail settings and try again.', ['names' => implode(', ', $failed)]);
         }
 
         if ($noAddress) {
-            $problems[] = 'No email address (no VIP email and no contact): '.implode(', ', $noAddress);
+            $problems[] = __('No email address (no VIP email and no contact): :names', ['names' => implode(', ', $noAddress)]);
         }
 
         if ($problems) {
@@ -178,9 +175,9 @@ class InvitationsTable
     {
         return CustomFieldDefinition::orderBy('sort_order')->get()
             ->map(fn (CustomFieldDefinition $field) => TextColumn::make('custom_'.$field->field_key)
-                ->label($field->label)
+                ->label($field->localizedLabel())
                 ->state(fn (Invitation $record) => $record->customFieldValues->firstWhere('field_key', $field->field_key)?->value)
-                ->placeholder('—')
+                ->placeholder(__('—'))
                 ->toggleable(isToggledHiddenByDefault: true))
             ->all();
     }

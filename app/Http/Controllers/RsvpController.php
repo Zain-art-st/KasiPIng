@@ -28,7 +28,7 @@ class RsvpController extends Controller
     return view('rsvp.show', [
         'invitation' => $contact->invitation,
         'contact' => $contact,
-        'settings' => \App\Models\FormSettings::current(),
+        'settings' => \App\Models\FormSettings::current()->localized(),
         'customFields' => $customFields,
         'existingValues' => $existingValues,
     ]);
@@ -45,7 +45,7 @@ public function submit(string $token, Request $request): \Illuminate\Http\Redire
     if ($contact->invitation->is_locked) {
         return redirect()
             ->route('rsvp.show', $token)
-            ->with('error', 'This response has already been recorded and cannot be changed.');
+            ->with('error', __('This response has already been recorded and cannot be changed.'));
     }
 
     $validated = $request->validate([
@@ -58,6 +58,10 @@ public function submit(string $token, Request $request): \Illuminate\Http\Redire
         'submitted_by_name' => ['nullable', 'string', 'max:255'],
         'custom_fields' => ['nullable', 'array'],
         'custom_fields.*' => ['nullable', 'string', 'max:255'],
+    ], [
+        'attendance_status.required' => __('Please choose one of the answers.'),
+        'attendance_status.in' => __('Please choose one of the answers.'),
+        'representative_name.required_if' => __('Please enter the name of your representative.'),
     ]);
 
     $contact->invitation->update([
@@ -82,7 +86,7 @@ public function submit(string $token, Request $request): \Illuminate\Http\Redire
 
     return redirect()
         ->route('rsvp.show', $token)
-        ->with('success', \App\Models\FormSettings::current()->thank_you_message);
+        ->with('success', \App\Models\FormSettings::current()->localized()->thank_you_message);
 }
 
     private function isExpired(InvitationContact $contact): bool

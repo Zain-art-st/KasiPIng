@@ -26,11 +26,17 @@ class ImportInvitations extends Page
 {
     protected string $view = 'filament.pages.import-invitations';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Big Event RSVP';
+    public static function getNavigationGroup(): string|\UnitEnum|null
+    {
+        return __('Big Event RSVP');
+    }
 
     protected static string|\BackedEnum|null $navigationIcon = \Filament\Support\Icons\Heroicon::OutlinedArrowUpTray;
 
-    protected static ?string $navigationLabel = 'Import Guests (CSV)';
+    public static function getNavigationLabel(): string
+    {
+        return __('Import Guests (CSV)');
+    }
 
     protected static ?int $navigationSort = 2;
 
@@ -53,21 +59,21 @@ class ImportInvitations extends Page
     private function targetFieldOptions(): array
     {
         $fixed = [
-            'vip_name' => 'VIP Name',
-            'organization' => 'Organization',
-            'position_title' => 'Position (jawatan) — also matched to the Kekananan list',
-            'vip_email' => 'VIP Email',
-            'vip_phone' => 'VIP Phone',
-            'pa_name' => 'Contact (PA) Name',
-            'pa_email' => 'Contact (PA) Email',
+            'vip_name' => __('VIP Name'),
+            'organization' => __('Organization'),
+            'position_title' => __('Position (jawatan) — also matched to the Kekananan list'),
+            'vip_email' => __('VIP Email'),
+            'vip_phone' => __('VIP Phone'),
+            'pa_name' => __('Contact (PA) Name'),
+            'pa_email' => __('Contact (PA) Email'),
         ];
 
         $custom = CustomFieldDefinition::where('enabled', true)
             ->pluck('label', 'field_key')
-            ->mapWithKeys(fn ($label, $key) => ["custom:{$key}" => "Custom: {$label}"])
+            ->mapWithKeys(fn ($label, $key) => ["custom:{$key}" => __('Custom').": {$label}"])
             ->toArray();
 
-        $options = ['' => '— Skip this column —'] + $fixed + $custom;
+        $options = ['' => __('— Skip this column —')] + $fixed + $custom;
 
         if (CustomFieldDefinition::count() < 5) {
             $options['new_custom'] = '+ Create new custom field from this column';
@@ -81,10 +87,10 @@ class ImportInvitations extends Page
         return $schema
             ->components([
                 Wizard::make([
-                    Wizard\Step::make('Upload')
+                    Wizard\Step::make(__('Upload'))
                         ->schema([
                             FileUpload::make('csv_file')
-                                ->label('CSV File')
+                                ->label(__('CSV File'))
                                 ->acceptedFileTypes(['text/csv', 'text/plain'])
                                 ->required()
                                 ->disk('local')
@@ -113,26 +119,26 @@ class ImportInvitations extends Page
                                     }
                                 }),
                         ]),
-                    Wizard\Step::make('Map Columns')
+                    Wizard\Step::make(__('Map Columns'))
                         ->schema(function () {
                             if (empty($this->csvHeaders)) {
                                 return [
                                     Placeholder::make('none')
                                         ->label('')
-                                        ->content('Upload a valid CSV on the previous step first.'),
+                                        ->content(__('Upload a valid CSV on the previous step first.')),
                                 ];
                             }
 
                             return collect($this->csvHeaders)->map(
                                 fn ($header) => Select::make("mapping.{$header}")
-                                    ->label("Column: \"{$header}\"")
+                                    ->label(__('Column').": \"{$header}\"")
                                     ->options($this->targetFieldOptions())
                                     ->default('')
                             )->toArray();
                         }),
                 ])->submitAction(
                     Action::make('import')
-                        ->label('Import')
+                        ->label(__('Import'))
                         ->action('import')
                 ),
             ])
@@ -146,7 +152,7 @@ class ImportInvitations extends Page
         $fileState = $state['csv_file'] ?? null;
 
         if (! $fileState || empty($mapping)) {
-            Notification::make()->title('Missing file or mapping data.')->danger()->send();
+            Notification::make()->title(__('Missing file or mapping data.'))->danger()->send();
             return;
         }
 
@@ -154,11 +160,10 @@ class ImportInvitations extends Page
         $fullPath = Storage::disk('local')->path($path);
 
         if (! file_exists($fullPath)) {
-            Notification::make()->title('Could not find the uploaded file.')->danger()->send();
+            Notification::make()->title(__('Could not find the uploaded file.'))->danger()->send();
             return;
         }
 
-        // Resolve any "create new custom field" choices into real definitions first
         $slotsAvailable = 5 - CustomFieldDefinition::count();
         $skippedNewFields = [];
 
@@ -190,7 +195,7 @@ class ImportInvitations extends Page
             $meetingModel = Meeting::find($this->meeting);
 
             if (! $meetingModel) {
-                Notification::make()->title('That meeting no longer exists.')->danger()->send();
+                Notification::make()->title(__('That meeting no longer exists.'))->danger()->send();
                 return;
             }
 
@@ -233,8 +238,6 @@ class ImportInvitations extends Page
                 continue;
             }
 
-            // Fixed: 1st array checks uniqueness per meeting_id + vip_name + organization;
-            // 2nd array sets additional fields when creating.
             $invitation = Invitation::firstOrCreate(
                 [
                     'meeting_id' => $meetingId,
@@ -284,9 +287,9 @@ class ImportInvitations extends Page
 
         fclose($file);
 
-        $message = "Import complete: {$created} rows processed, {$skipped} skipped";
+        $message = __('Import complete: :created rows processed, :skipped skipped', ['created' => $created, 'skipped' => $skipped]);
         if (! empty($skippedNewFields)) {
-            $message .= '. Could not create new field(s) for: ' . implode(', ', $skippedNewFields) . ' (5-field limit reached)';
+            $message .= '. '.__('Could not create new field(s) for: :fields (5-field limit reached)', ['fields' => implode(', ', $skippedNewFields)]);
         }
 
         Notification::make()

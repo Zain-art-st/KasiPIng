@@ -42,22 +42,22 @@ class ContactsRelationManager extends RelationManager
                     ->searchable(),
                 TextColumn::make('last_used_at')
                     ->dateTime()
-                    ->label('Last Opened')
-                    ->placeholder('Never'),
+                    ->label(__('Last Opened'))
+                    ->placeholder(__('Never')),
             ])
             ->headerActions([
                 CreateAction::make(),
             ])
             ->recordActions([
                 \Filament\Actions\Action::make('sendInvitation')
-                    ->label('Send Invitation')
+                    ->label(__('Send Invitation'))
                     ->icon('heroicon-o-envelope')
                     ->action(function (\App\Models\InvitationContact $record) {
                     \Illuminate\Support\Facades\Mail::send(new \App\Mail\InvitationEmail($record));
                     $record->invitation->forceFill(['invited_at' => now()])->save();
 
                      \Filament\Notifications\Notification::make()
-                    ->title('Invitation sent for '.$record->invitation->vip_name)
+                    ->title(__('Invitation sent for :name', ['name' => $record->invitation->vip_name]))
                     ->success()
                     ->send();
                     }),

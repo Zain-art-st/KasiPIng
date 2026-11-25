@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AttendanceSheet
 {
+    // Group heading for guests with no ministry / company; the Malay wording is in lang/ms.json.
     public const NO_ORGANIZATION = 'Other (no ministry / company)';
 
     public function __construct(
@@ -34,9 +35,9 @@ class AttendanceSheet
                     ->sortBy('vip_name', SORT_NATURAL | SORT_FLAG_CASE)
                     ->map(fn (Invitation $i) => $i->attendance_status === 'representative_attending'
                         ? [
-                            'name' => trim(($i->representative_name ?: 'Representative')
+                            'name' => trim(($i->representative_name ?: __('Representative'))
                                 .($i->representative_role ? ', '.$i->representative_role : '')
-                                .' (for '.$i->vip_name.')'),
+                                .' ('.__('for :name', ['name' => $i->vip_name]).')'),
                             'phone' => '',
                         ]
                         : ['name' => $i->vip_name, 'phone' => (string) $i->vip_phone])
@@ -46,7 +47,10 @@ class AttendanceSheet
                 $total = max($this->minRows, $people->count(), count($filled));
                 $blank = array_fill(0, $total - count($filled), ['name' => '', 'phone' => '']);
 
-                return ['organization' => $organization, 'rows' => array_merge($filled, $blank)];
+                return [
+                    'organization' => $organization === self::NO_ORGANIZATION ? __(self::NO_ORGANIZATION) : $organization,
+                    'rows' => array_merge($filled, $blank),
+                ];
             })
             ->values()
             ->all();
@@ -54,7 +58,7 @@ class AttendanceSheet
 
     public function filename(string $extension): string
     {
-        return 'Attendance - '.Str::of($this->title)->replaceMatches('/[^\pL\pN\s\-]+/u', '')->squish()->limit(60, '').'.'.$extension;
+        return __('Attendance').' - '.Str::of($this->title)->replaceMatches('/[^\pL\pN\s\-]+/u', '')->squish()->limit(60, '').'.'.$extension;
     }
 
     public function pdf(): StreamedResponse
@@ -96,7 +100,7 @@ class AttendanceSheet
 
             $table->addRow(360, ['cantSplit' => true, 'tblHeader' => true]);
             foreach (['No.', 'Name', 'Phone number', 'Signature'] as $i => $heading) {
-                $table->addCell($widths[$i])->addText($heading, ['bold' => true]);
+                $table->addCell($widths[$i])->addText(__($heading), ['bold' => true]);
             }
 
             foreach ($group['rows'] as $n => $row) {

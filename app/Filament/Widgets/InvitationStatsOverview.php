@@ -14,14 +14,14 @@ class InvitationStatsOverview extends StatsOverviewWidget
     $standalone = fn () => Invitation::whereNull('meeting_id');
 
     return [
-        Stat::make('Total Invited', $standalone()->count()),
-        Stat::make('Attending', $standalone()->where('attendance_status', 'attending')->count())
+        Stat::make(__('Total Invited'), $standalone()->count()),
+        Stat::make(__('Attending'), $standalone()->where('attendance_status', 'attending')->count())
             ->color('success'),
-        Stat::make('Representative', $standalone()->where('attendance_status', 'representative_attending')->count())
+        Stat::make(__('Representative'), $standalone()->where('attendance_status', 'representative_attending')->count())
             ->color('info'),
-        Stat::make('Not Attending', $standalone()->where('attendance_status', 'not_attending')->count())
+        Stat::make(__('Not Attending'), $standalone()->where('attendance_status', 'not_attending')->count())
             ->color('danger'),
-        Stat::make('Pending', $standalone()->where('attendance_status', 'pending')->count())
+        Stat::make(__('Pending'), $standalone()->where('attendance_status', 'pending')->count())
             ->color('warning'),
     ];
 }

@@ -25,13 +25,14 @@ class ReminderEmail extends Mailable
     {
         $vipEmail = $this->invitation->vip_email;
         $copyContact = $vipEmail && strcasecmp($vipEmail, $this->contact->email) !== 0;
-        $prefix = $this->urgent() ? 'URGENT: ' : 'Reminder: ';
+        $subject = fn ($locale) => __($this->urgent() ? 'URGENT: :title — please respond' : 'Reminder: :title — please respond',
+            ['title' => $this->title($locale)], $locale);
 
         return new Envelope(
             to: [$vipEmail ?: $this->contact->email],
             cc: $copyContact ? [$this->contact->email] : [],
             replyTo: array_filter([config('mail.reply_to_address')]),
-            subject: $prefix.$this->title().' — please respond',
+            subject: implode(' / ', InvitationEmail::inBothLanguages($subject)),
         );
     }
 
@@ -44,43 +45,40 @@ class ReminderEmail extends Mailable
             markdown: 'emails.reminder',
             with: [
                 'attendeeName' => $this->invitation->vip_name,
-                'title' => $this->title(),
+                'title' => InvitationEmail::inBothLanguages(fn ($locale) => $this->title($locale)),
                 'isMeeting' => (bool) $meeting,
-                'when' => $deadline?->format('D, j M Y · g:i A'),
+                'when' => InvitationEmail::inBothLanguages(fn ($locale) => $deadline?->copy()->locale($locale)->translatedFormat('D, j M Y · g:i A')),
                 'location' => $meeting?->location,
-                'leadLabel' => $this->leadLabel(),
+                'leadLabel' => InvitationEmail::inBothLanguages(fn ($locale) => $this->leadLabel($locale)),
                 'urgent' => $this->urgent(),
                 'rsvpUrl' => $this->contact->rsvpUrl(),
             ],
         );
     }
 
-    private function title(): string
+    private function title(string $locale): string
     {
-        return $this->invitation->meeting?->title ?? FormSettings::current()->page_heading;
+        return $this->invitation->meeting?->title ?? FormSettings::current()->localized($locale)->page_heading;
     }
 
+    // Reminders sent within this many minutes of the start are marked URGENT.
     private function urgent(): bool
     {
         return $this->minutesLeft <= 60;
     }
 
-    public function leadLabel(): string
+    public function leadLabel(string $locale = 'en'): string
     {
         $minutes = $this->minutesLeft;
 
         if ($minutes >= 1440) {
-            $days = intdiv($minutes, 1440);
-
-            return $days.' '.($days === 1 ? 'day' : 'days');
+            return trans_choice(':count day|:count days', intdiv($minutes, 1440), [], $locale);
         }
 
         if ($minutes >= 60) {
-            $hours = intdiv($minutes, 60);
-
-            return $hours.' '.($hours === 1 ? 'hour' : 'hours');
+            return trans_choice(':count hour|:count hours', intdiv($minutes, 60), [], $locale);
         }
 
-        return $minutes.' '.($minutes === 1 ? 'minute' : 'minutes');
+        return trans_choice(':count minute|:count minutes', $minutes, [], $locale);
     }
 }

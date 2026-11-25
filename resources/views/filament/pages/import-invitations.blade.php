@@ -1,11 +1,11 @@
 <x-filament-panels::page>
     <div class="mb-4 text-sm text-gray-600">
-        Upload a CSV with columns: <code>vip_name</code>, <code>organization</code> (optional), <code>pa_name</code>, <code>pa_email</code>.
-        Multiple rows with the same VIP name will be grouped as multiple contacts under one invitation.
+        {{ __('Upload a CSV with columns:') }} <code>vip_name</code>, <code>organization</code> ({{ __('optional') }}), <code>pa_name</code>, <code>pa_email</code>.
+        {{ __('Multiple rows with the same VIP name will be grouped as multiple contacts under one invitation.') }}
         @if ($this->meeting)
     <div class="mb-4 text-sm">
-        Importing attendees into:
-        <strong>{{ \App\Models\Meeting::find($this->meeting)?->title ?? 'Unknown meeting' }}</strong>
+        {{ __('Importing attendees into:') }}
+        <strong>{{ \App\Models\Meeting::find($this->meeting)?->title ?? __('Unknown meeting') }}</strong>
     </div>
     @endif
     </div>
@@ -15,7 +15,7 @@
 
         <div class="mt-4">
             <x-filament::button type="submit">
-                Import
+                {{ __('Import') }}
             </x-filament::button>
         </div>
     </form>
